@@ -1,0 +1,31 @@
+{
+  "name": "driba-functions",
+  "description": "Driba OS — All-Google AI Pipeline + AI Studio + Dual Ratio",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "deploy:agents": "firebase deploy --only functions:agentsCron,functions:runAgents,functions:runAgent,functions:regenerateMedia,functions:agentStatus",
+    "deploy:studio": "firebase deploy --only functions:aiMediaProcess,functions:processUserMedia",
+    "test-agent": "curl https://us-central1-driba-os.cloudfunctions.net/runAgent?creator=chef_aiden",
+    "test-all": "curl https://us-central1-driba-os.cloudfunctions.net/runAgents?force=true",
+    "agent-status": "curl https://us-central1-driba-os.cloudfunctions.net/agentStatus",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.5.0",
+    "google-auth-library": "^9.14.0",
+    "@anthropic-ai/sdk": "^0.39.0",
+    "openai": "^4.77.0",
+    "@google/generative-ai": "^0.21.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  },
+  "private": true
+}

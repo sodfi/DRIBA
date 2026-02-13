@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+    }
+    match /posts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isOwner(resource.data.author);
+      match /comments/{commentId} {
+        allow read, create: if isSignedIn();
+        allow update, delete: if isOwner(resource.data.userId);
+      }
+    }
+    match /products/{id} { allow read: if isSignedIn(); allow write: if false; }
+    match /restaurants/{id} { allow read: if isSignedIn(); allow write: if false; }
+    match /travel_listings/{id} { allow read: if isSignedIn(); allow write: if false; }
+    match /news_articles/{id} { allow read: if isSignedIn(); allow write: if false; }
+    match /health_tips/{id} { allow read: if isSignedIn(); allow write: if false; }
+    match /chats/{chatId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && request.auth.uid in resource.data.participants;
+      match /messages/{msgId} { allow read, create: if isSignedIn(); }
+    }
+    match /orders/{id} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if isSignedIn();
+      allow update: if isOwner(resource.data.userId);
+    }
+    match /activities/{id} {
+      allow read, write: if isOwner(resource.data.userId);
+    }
+    match /user_health/{userId}/{document=**} {
+      allow read, write: if isOwner(userId);
+    }
+    match /global/{id} { allow read: if isSignedIn(); allow write: if false; }
+    match /moderation_queue/{id} { allow read, write: if false; }
+  }
+}
