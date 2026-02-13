@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 import '../../core/animations/driba_animations.dart';
 import 'food_models.dart';
 
@@ -33,31 +34,10 @@ class FoodCartSheet extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      height: screenHeight * 0.75,
-      decoration: const BoxDecoration(
-        color: DribaColors.background,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(DribaBorderRadius.xxl),
-        ),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.75,
       child: Column(
         children: [
-          // Handle
-          Padding(
-            padding: const EdgeInsets.only(top: DribaSpacing.md),
-            child: Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-          ),
-
           // Header
           Padding(
             padding: const EdgeInsets.all(DribaSpacing.lg),

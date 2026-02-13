@@ -8,6 +8,7 @@ import '../../core/animations/driba_animations.dart';
 import '../../core/providers/theme_provider.dart';
 import 'appearance_sheet.dart';
 import 'screens_customizer.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 
 // ============================================
 // SETTINGS SCREEN
@@ -356,16 +357,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: BoxDecoration(
-          color: DribaColors.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(DribaBorderRadius.xxl)),
-        ),
+      builder: (ctx) => GlassBottomSheet(
         padding: const EdgeInsets.all(DribaSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: DribaColors.glassBorder, borderRadius: BorderRadius.circular(2))),
             const SizedBox(height: DribaSpacing.xl),
             const Text('Font Size', style: TextStyle(color: DribaColors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800)),
             const SizedBox(height: DribaSpacing.xl),
@@ -410,16 +406,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSheetState) {
           final blur = ref.watch(themeProvider).blurIntensity;
-          return Container(
-            decoration: BoxDecoration(
-              color: DribaColors.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(DribaBorderRadius.xxl)),
-            ),
+          return GlassBottomSheet(
             padding: const EdgeInsets.all(DribaSpacing.xl),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(width: 40, height: 4, decoration: BoxDecoration(color: DribaColors.glassBorder, borderRadius: BorderRadius.circular(2))),
                 const SizedBox(height: DribaSpacing.xl),
                 const Text('Glass Blur Intensity', style: TextStyle(color: DribaColors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800)),
                 const SizedBox(height: DribaSpacing.sm),

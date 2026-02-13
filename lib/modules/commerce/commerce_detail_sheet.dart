@@ -6,6 +6,7 @@ import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
 import 'commerce_models.dart';
 import 'commerce_widgets.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 
 /// Product detail bottom sheet
 /// Image gallery, variant picker, reviews, seller info, add to cart
@@ -88,13 +89,9 @@ class _CommerceDetailSheetState extends State<CommerceDetailSheet> {
     final screenHeight = MediaQuery.of(context).size.height;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      height: screenHeight * 0.92,
-      decoration: const BoxDecoration(
-        color: DribaColors.background,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(DribaBorderRadius.xxl)),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.92,
+      showHandle: false,
       child: Column(
         children: [
           // Scrollable content

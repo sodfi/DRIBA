@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import '../core/theme/driba_colors.dart';
 import 'ai_studio_sheet.dart';
+import '../core/widgets/glass_bottom_sheet.dart';
 
 // ============================================================
 // CREATE POST SCREEN
@@ -100,13 +101,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen>
   void _showMediaPicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: DribaColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => GlassBottomSheet(
+        padding: const EdgeInsets.all(24),
+        child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/theme/driba_colors.dart';
+import '../core/widgets/glass_bottom_sheet.dart';
 
 // ============================================================
 // AI STUDIO SHEET
@@ -216,15 +217,19 @@ class _AiStudioSheetState extends State<AiStudioSheet> with SingleTickerProvider
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
         child: Container(
           height: mq.size.height * 0.85,
           decoration: BoxDecoration(
-            color: const Color(0xF0080E1C),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
+            color: const Color(0xFF060E1A).withOpacity(0.78),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border(
+              top: BorderSide(color: Colors.white.withOpacity(0.08), width: 0.5),
+              left: BorderSide(color: Colors.white.withOpacity(0.05), width: 0.5),
+              right: BorderSide(color: Colors.white.withOpacity(0.05), width: 0.5),
+            ),
           ),
           child: Column(
             children: [

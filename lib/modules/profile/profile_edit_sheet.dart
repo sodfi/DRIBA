@@ -6,6 +6,7 @@ import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/animations/driba_animations.dart';
 import '../../shared/models/models.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 
 /// Profile Edit Sheet
 /// Editable fields + AI bio generation
@@ -116,14 +117,9 @@ class _ProfileEditSheetState extends State<ProfileEditSheet>
     final topPad = MediaQuery.of(context).padding.top;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.92,
-      decoration: BoxDecoration(
-        color: DribaColors.surface,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DribaBorderRadius.xxl),
-        ),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.92,
+      showHandle: true,
       child: Column(
         children: [
           // Handle bar

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 import '../../core/animations/driba_animations.dart';
 import '../../core/providers/theme_provider.dart';
 
@@ -44,21 +45,15 @@ class _AppearanceSheetState extends ConsumerState<AppearanceSheet>
     final accent = theme.accentColor;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.88,
-      decoration: BoxDecoration(
-        color: theme.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(DribaBorderRadius.xxl)),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.88,
       child: Column(
         children: [
-          // Handle + header
+          // Header
           Padding(
             padding: const EdgeInsets.all(DribaSpacing.xl),
             child: Column(
               children: [
-                Container(width: 40, height: 4, decoration: BoxDecoration(color: DribaColors.glassBorder, borderRadius: BorderRadius.circular(2))),
-                const SizedBox(height: DribaSpacing.xl),
                 Row(
                   children: [
                     GlassCircleButton(size: 36, onTap: () => Navigator.pop(context), child: const Icon(Icons.close, color: DribaColors.textSecondary, size: 18)),

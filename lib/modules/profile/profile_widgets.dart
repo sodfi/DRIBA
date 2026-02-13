@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 import '../../shared/models/models.dart';
 
 // ============================================
@@ -20,28 +21,10 @@ class SettingsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
-      decoration: BoxDecoration(
-        color: DribaColors.surface,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(DribaBorderRadius.xxl),
-        ),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.75,
       child: Column(
         children: [
-          // Handle
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: DribaSpacing.md),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: DribaColors.glassBorder,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
           // Title
           const Padding(
             padding: EdgeInsets.all(DribaSpacing.xl),

@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
 import 'commerce_models.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 
 /// Shopping cart bottom sheet
 /// Item list, quantity controls, pricing breakdown, checkout
@@ -40,29 +41,10 @@ class CommerceCartSheet extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    return Container(
-      height: screenHeight * 0.75,
-      decoration: const BoxDecoration(
-        color: DribaColors.background,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(DribaBorderRadius.xxl)),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.75,
       child: Column(
         children: [
-          // Handle
-          Padding(
-            padding: const EdgeInsets.only(top: DribaSpacing.md),
-            child: Center(
-              child: Container(
-                width: 36, height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-          ),
-
           // Header
           Padding(
             padding: const EdgeInsets.all(DribaSpacing.lg),

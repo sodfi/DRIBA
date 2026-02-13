@@ -6,6 +6,7 @@ import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
 import 'food_models.dart';
 import 'food_widgets.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 
 /// Restaurant detail bottom sheet
 /// Full menu, ratings, delivery info, add-to-cart
@@ -82,14 +83,9 @@ class _FoodDetailSheetState extends State<FoodDetailSheet> {
     final topPadding = MediaQuery.of(context).padding.top;
     final r = widget.restaurant;
 
-    return Container(
-      height: screenHeight * 0.92,
-      decoration: const BoxDecoration(
-        color: DribaColors.background,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(DribaBorderRadius.xxl),
-        ),
-      ),
+    return GlassBottomSheet(
+      heightFraction: 0.92,
+      showHandle: false,
       child: Stack(
         children: [
           // Scrollable content

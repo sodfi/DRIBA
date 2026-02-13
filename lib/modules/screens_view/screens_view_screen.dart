@@ -6,6 +6,7 @@ import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/glass_header.dart';
 import '../../core/providers/app_state.dart';
+import '../../core/widgets/glass_bottom_sheet.dart';
 
 /// Screens View - Pinterest-style masonry grid
 /// Shows live previews of each enabled screen
@@ -510,15 +511,15 @@ class _ScreenOptionsSheet extends StatelessWidget {
         top: Radius.circular(DribaBorderRadius.xxl),
       ),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: DribaBlur.heavy, sigmaY: DribaBlur.heavy),
+        filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
         child: Container(
           padding: const EdgeInsets.all(DribaSpacing.xl),
           decoration: BoxDecoration(
-            color: DribaColors.surface.withOpacity(0.9),
+            color: const Color(0xFF060E1A).withOpacity(0.78),
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(DribaBorderRadius.xxl),
+              top: Radius.circular(28),
             ),
-            border: Border.all(color: DribaColors.glassBorder),
+            border: Border.all(color: Colors.white.withOpacity(0.08)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -644,7 +645,7 @@ class _AddScreenSheet extends ConsumerWidget {
             filter: ImageFilter.blur(sigmaX: DribaBlur.heavy, sigmaY: DribaBlur.heavy),
             child: Container(
               decoration: BoxDecoration(
-                color: DribaColors.surface.withOpacity(0.95),
+                color: const Color(0xFF060E1A).withOpacity(0.78),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(DribaBorderRadius.xxl),
                 ),
