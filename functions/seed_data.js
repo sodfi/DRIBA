@@ -338,7 +338,7 @@ async function seedNewsArticles() {
     { title: "The Mediterranean Diet: New Study Confirms Brain Health Benefits", source: "Nature", category: "science", image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800", readTime: 6, hasAISummary: true, aiSummary: "15-year longitudinal study shows 40% reduction in cognitive decline with Mediterranean diet." },
     { title: "Gen Z Reshaping Remote Work Culture Globally", source: "Bloomberg", category: "business", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800", readTime: 5, hasAISummary: false },
     { title: "COP31: Historic Global Climate Agreement on Renewable Energy", source: "Reuters", category: "world", image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800", readTime: 3, hasAISummary: true, aiSummary: "195 nations agree to joint renewable energy framework targeting 60% green energy by 2035." },
-    { title: "Milan Design Week 2026 Showcases Emerging Global Creatives", source: "Wallpaper*", category: "culture", image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800", readTime: 4, hasAISummary: false },
+    { title: "Milan Design Week 2026 Showcases Emerging Global Creatives", source: "Wallpaper*", category: "culture", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800", readTime: 4, hasAISummary: false },
     { title: "World's Largest Solar Installation in Rajasthan Reaches 10GW", source: "The Verge", category: "technology", image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800", readTime: 3, hasAISummary: true, aiSummary: "India's mega solar project now powers 5 million homes and exports energy to neighboring countries." },
   ];
 

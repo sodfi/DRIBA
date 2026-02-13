@@ -51,7 +51,7 @@ class ProfileDemoData {
   static final List<ProfilePost> recentPosts = [
     ProfilePost(
       id: 'pp1',
-      imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400',
+      imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400',
       type: 'image',
       likesCount: 234,
       commentsCount: 18,
@@ -100,7 +100,7 @@ class ProfileDemoData {
     ),
     const ProfileHighlight(
       id: 'h2', title: 'Design', emoji: '🎨',
-      coverUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=200',
+      coverUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=200',
     ),
     const ProfileHighlight(
       id: 'h3', title: 'Travel', emoji: '✈️',

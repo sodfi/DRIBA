@@ -3,19 +3,19 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../theme/driba_colors.dart';
 import 'shell_state.dart';
 
 // ============================================
-// ENGAGEMENT OVERLAY — v3
+// ENGAGEMENT OVERLAY — v4
 //
-// Single bottom bar that morphs per action.
-// Slides up from bottom with heavy blur.
-// Each action has unique messaging + submit icon.
-// Hidden on Chat screen.
-//
-// Flow (one at a time, slow):
-//   Like → Comment → Save → Share → gone
+// Bottom bar that appears ONLY when viewing posts.
+// One action at a time: Like → Comment → Save → Share
+// Each visible for ~9 seconds.
+// Anonymous users → redirect to sign up.
+// Actions target the specific post being viewed.
 // ============================================
 
 class EngagementOverlay extends ConsumerWidget {
@@ -23,19 +23,22 @@ class EngagementOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final engagement = ref.watch(engagementProvider);
-    final screen = ref.watch(currentScreenProvider);
+    final shell = ref.watch(shellProvider);
+    final screen = shell.currentScreen;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    // Hide on Chat — it has its own input
-    if (screen == DribaScreen.chat) return const SizedBox.shrink();
+    // Only show on post views, never on chat
+    if (screen == DribaScreen.chat || !shell.isViewingPost) {
+      return const SizedBox.shrink();
+    }
 
     return Positioned(
       left: 0,
       right: 0,
       bottom: 0,
       child: _EngagementBar(
-        action: engagement.activeAction,
+        action: shell.engagement.activeAction,
+        postId: shell.currentPostId,
         bottomPad: bottomPad,
       ),
     );
@@ -45,9 +48,10 @@ class EngagementOverlay extends ConsumerWidget {
 /// Bottom action bar — morphs per engagement action
 class _EngagementBar extends StatefulWidget {
   final EngagementAction action;
+  final String? postId;
   final double bottomPad;
 
-  const _EngagementBar({required this.action, required this.bottomPad});
+  const _EngagementBar({required this.action, this.postId, required this.bottomPad});
 
   @override
   State<_EngagementBar> createState() => _EngagementBarState();
@@ -60,8 +64,8 @@ class _EngagementBarState extends State<_EngagementBar>
   late Animation<double> _fade;
   final _textController = TextEditingController();
   bool _isEditing = false;
+  bool _actionTaken = false;
 
-  // Varied messages per action so user doesn't get bored
   static final _random = math.Random();
 
   static const _likeMessages = [
@@ -113,15 +117,15 @@ class _EngagementBarState extends State<_EngagementBar>
     super.initState();
     _anim = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
-      reverseDuration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 700),
+      reverseDuration: const Duration(milliseconds: 600),
     );
     _slide = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic, reverseCurve: Curves.easeInCubic));
     _fade = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _anim, curve: Curves.easeOut),
+      CurvedAnimation(parent: _anim, curve: const Interval(0.0, 0.6, curve: Curves.easeOut)),
     );
   }
 
@@ -139,10 +143,10 @@ class _EngagementBarState extends State<_EngagementBar>
         if (mounted) setState(() {
           _currentAction = EngagementAction.none;
           _isEditing = false;
+          _actionTaken = false;
         });
       });
     } else {
-      // If already showing, cross-fade by reversing then forwarding
       if (_anim.isCompleted || _anim.isAnimating) {
         _anim.reverse().then((_) {
           if (mounted) {
@@ -161,6 +165,7 @@ class _EngagementBarState extends State<_EngagementBar>
     setState(() {
       _currentAction = action;
       _isEditing = false;
+      _actionTaken = false;
       switch (action) {
         case EngagementAction.like:
           _message = _likeMessages[_random.nextInt(_likeMessages.length)];
@@ -189,7 +194,74 @@ class _EngagementBarState extends State<_EngagementBar>
     super.dispose();
   }
 
+  /// Check if user is anonymous — show sign up prompt if so
+  bool _isAnonymous() {
+    final user = FirebaseAuth.instance.currentUser;
+    return user == null || user.isAnonymous;
+  }
+
+  void _showSignUpPrompt() {
+    HapticFeedback.mediumImpact();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _SignUpPrompt(),
+    );
+  }
+
+  /// Execute the action on the current post
+  void _onSubmit() {
+    HapticFeedback.mediumImpact();
+
+    if (_isAnonymous()) {
+      _showSignUpPrompt();
+      return;
+    }
+
+    final postId = widget.postId;
+    if (postId == null) return;
+
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+
+    setState(() => _actionTaken = true);
+
+    switch (_currentAction) {
+      case EngagementAction.like:
+        postRef.update({'likes': FieldValue.increment(1)});
+        // TODO: track in user's liked posts
+        break;
+      case EngagementAction.comment:
+        final text = _textController.text.trim();
+        if (text.isNotEmpty) {
+          postRef.collection('comments').add({
+            'userId': uid,
+            'text': text,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+          postRef.update({'comments': FieldValue.increment(1)});
+        }
+        break;
+      case EngagementAction.save:
+        postRef.update({'saves': FieldValue.increment(1)});
+        // TODO: track in user's saved posts
+        break;
+      case EngagementAction.share:
+        postRef.update({'shares': FieldValue.increment(1)});
+        break;
+      default:
+        break;
+    }
+
+    // Dismiss after action
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) _anim.reverse();
+    });
+  }
+
   IconData _actionIcon() {
+    if (_actionTaken) return Icons.check_rounded;
     switch (_currentAction) {
       case EngagementAction.like:
         return Icons.favorite_rounded;
@@ -205,6 +277,7 @@ class _EngagementBarState extends State<_EngagementBar>
   }
 
   Color _actionColor() {
+    if (_actionTaken) return const Color(0xFF00D68F);
     switch (_currentAction) {
       case EngagementAction.like:
         return const Color(0xFFFF2D55);
@@ -219,15 +292,12 @@ class _EngagementBarState extends State<_EngagementBar>
     }
   }
 
-  void _onSubmit() {
-    HapticFeedback.mediumImpact();
-    // TODO: wire to Firestore actions
-    // For now, dismiss
-    _anim.reverse();
-  }
-
   void _onTextFieldTap() {
     if (_currentAction == EngagementAction.comment && !_isEditing) {
+      if (_isAnonymous()) {
+        _showSignUpPrompt();
+        return;
+      }
       setState(() => _isEditing = true);
     }
   }
@@ -249,40 +319,40 @@ class _EngagementBarState extends State<_EngagementBar>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Expanded comment editor (slides up when tapped)
+        // Expanded comment editor
         if (_isEditing && _currentAction == EngagementAction.comment)
           _buildExpandedEditor(color),
 
         // Main bar
         ClipRRect(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
             child: Container(
-              padding: EdgeInsets.fromLTRB(20, 14, 12, widget.bottomPad + 14),
+              padding: EdgeInsets.fromLTRB(20, 16, 14, widget.bottomPad + 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF050B14).withOpacity(0.85),
+                color: const Color(0xFF050B14).withOpacity(0.88),
                 border: Border(
-                  top: BorderSide(color: color.withOpacity(0.15), width: 0.5),
+                  top: BorderSide(color: color.withOpacity(0.12), width: 0.5),
                 ),
               ),
               child: Row(
                 children: [
-                  // Message text or editable field
+                  // Message text or tappable comment preview
                   Expanded(
                     child: _currentAction == EngagementAction.comment && !_isEditing
                         ? GestureDetector(
                             onTap: _onTextFieldTap,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                                color: Colors.white.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(22),
+                                border: Border.all(color: Colors.white.withOpacity(0.07)),
                               ),
                               child: Text(
                                 _prefill.isNotEmpty ? _prefill : _message,
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.55),
+                                  color: Colors.white.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -292,11 +362,11 @@ class _EngagementBarState extends State<_EngagementBar>
                             ),
                           )
                         : Text(
-                            _message,
+                            _actionTaken ? 'Done! ✓' : _message,
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.55),
+                              color: Colors.white.withOpacity(_actionTaken ? 0.7 : 0.5),
                               fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: _actionTaken ? FontWeight.w600 : FontWeight.w400,
                               height: 1.4,
                             ),
                             maxLines: 2,
@@ -304,18 +374,24 @@ class _EngagementBarState extends State<_EngagementBar>
                           ),
                   ),
 
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
 
                   // Action button
                   GestureDetector(
-                    onTap: _onSubmit,
-                    child: Container(
-                      width: 44,
-                      height: 44,
+                    onTap: _actionTaken ? null : _onSubmit,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      width: 46,
+                      height: 46,
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.15),
+                        color: _actionTaken
+                            ? color.withOpacity(0.2)
+                            : color.withOpacity(0.12),
                         shape: BoxShape.circle,
-                        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+                        border: Border.all(
+                          color: color.withOpacity(_actionTaken ? 0.5 : 0.25),
+                          width: 1.5,
+                        ),
                       ),
                       child: Icon(_actionIcon(), color: color, size: 20),
                     ),
@@ -332,11 +408,11 @@ class _EngagementBarState extends State<_EngagementBar>
   Widget _buildExpandedEditor(Color color) {
     return ClipRRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
+          padding: const EdgeInsets.fromLTRB(20, 16, 14, 10),
           decoration: BoxDecoration(
-            color: const Color(0xFF050B14).withOpacity(0.9),
+            color: const Color(0xFF050B14).withOpacity(0.92),
             border: Border(
               top: BorderSide(color: color.withOpacity(0.1), width: 0.5),
             ),
@@ -347,9 +423,9 @@ class _EngagementBarState extends State<_EngagementBar>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: color.withOpacity(0.2)),
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: color.withOpacity(0.15)),
                   ),
                   child: TextField(
                     controller: _textController,
@@ -357,7 +433,7 @@ class _EngagementBarState extends State<_EngagementBar>
                     style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 15),
                     decoration: InputDecoration(
                       hintText: _message,
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.25)),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
                     ),
@@ -365,20 +441,166 @@ class _EngagementBarState extends State<_EngagementBar>
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               GestureDetector(
                 onTap: _onSubmit,
                 child: Container(
-                  width: 40,
-                  height: 40,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [color, color.withOpacity(0.7)],
-                    ),
+                    gradient: LinearGradient(colors: [color, color.withOpacity(0.7)]),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Sign Up Prompt (shown for anonymous users) ──
+class _SignUpPrompt extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          child: Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0A1628).withOpacity(0.95),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: DribaColors.primary.withOpacity(0.15)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: DribaColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DribaColors.primary.withOpacity(0.3),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.person_add_rounded, color: Colors.white, size: 28),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Join Driba',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Create a free account to like, comment, save, and interact with content.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.5),
+                    fontSize: 15,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                // Sign up button
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    // Navigate to auth screen
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => _AuthRedirectScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      gradient: DribaColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: DribaShadows.primaryGlow,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Create Account',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'Maybe later',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.4),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Simple redirect to auth screen
+class _AuthRedirectScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Lazy import to avoid circular dependency
+    return Scaffold(
+      backgroundColor: const Color(0xFF050B14),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.construction_rounded, color: DribaColors.primary.withOpacity(0.5), size: 64),
+              const SizedBox(height: 24),
+              const Text(
+                'Sign Up Coming Soon',
+                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Full account creation will be available in the next update.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 15, height: 1.5),
               ),
             ],
           ),

@@ -133,14 +133,23 @@ class _DribaScreenShellState extends ConsumerState<DribaScreenShell> {
         return PageView.builder(
           controller: _postController,
           scrollDirection: Axis.vertical,
-          onPageChanged: (_) {
-            ref.read(shellProvider.notifier).onContentChanged();
+          onPageChanged: (index) {
+            final postId = posts[index].id;
+            ref.read(shellProvider.notifier).onContentChanged(postId: postId);
           },
           itemCount: posts.length,
-          itemBuilder: (_, index) => DribaPostCard(
-            post: posts[index],
-            accent: widget.accent,
-          ),
+          itemBuilder: (_, index) {
+            // Set initial post on first build
+            if (index == 0 && !ref.read(shellProvider).isViewingPost) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ref.read(shellProvider.notifier).onContentChanged(postId: posts[0].id);
+              });
+            }
+            return DribaPostCard(
+              post: posts[index],
+              accent: widget.accent,
+            );
+          },
         );
       },
       loading: () => Center(

@@ -195,6 +195,8 @@ class ShellState {
   final EngagementState engagement;
   final bool isMasonryOpen;
   final bool isTransitioning;
+  final String? currentPostId; // Track which post user is viewing
+  final bool isViewingPost; // Whether we're in a post view (not personal/list view)
 
   const ShellState({
     this.currentScreen = DribaScreen.feed,
@@ -212,6 +214,8 @@ class ShellState {
     this.engagement = EngagementState.hidden,
     this.isMasonryOpen = false,
     this.isTransitioning = false,
+    this.currentPostId,
+    this.isViewingPost = false,
   });
 
   int get currentIndex => screenOrder.indexOf(currentScreen);
@@ -223,6 +227,8 @@ class ShellState {
     EngagementState? engagement,
     bool? isMasonryOpen,
     bool? isTransitioning,
+    String? currentPostId,
+    bool? isViewingPost,
   }) {
     return ShellState(
       currentScreen: currentScreen ?? this.currentScreen,
@@ -231,6 +237,8 @@ class ShellState {
       engagement: engagement ?? this.engagement,
       isMasonryOpen: isMasonryOpen ?? this.isMasonryOpen,
       isTransitioning: isTransitioning ?? this.isTransitioning,
+      currentPostId: currentPostId ?? this.currentPostId,
+      isViewingPost: isViewingPost ?? this.isViewingPost,
     );
   }
 }
@@ -297,9 +305,11 @@ class ShellNotifier extends StateNotifier<ShellState> {
       chromeState: ChromeState.hidden,
       engagement: EngagementState.hidden,
       isMasonryOpen: false,
+      isViewingPost: false,
+      currentPostId: null,
     );
     _lastContentChange = DateTime.now();
-    _startEngagementTimers();
+    // Don't start engagement timers here — they start when a post is viewed
   }
 
   /// User tapped the screen — toggle chrome
@@ -331,21 +341,36 @@ class ShellNotifier extends StateNotifier<ShellState> {
 
   /// Content changed (new post in feed, new card swiped)
   /// Resets engagement timers
-  void onContentChanged() {
+  void onContentChanged({String? postId}) {
     _cancelEngagementTimers();
     _lastContentChange = DateTime.now();
-    state = state.copyWith(engagement: EngagementState.hidden);
-    _startEngagementTimers();
+    state = state.copyWith(
+      engagement: EngagementState.hidden,
+      currentPostId: postId,
+      isViewingPost: postId != null,
+    );
+    if (postId != null) {
+      _startEngagementTimers();
+    }
+  }
+
+  /// Mark whether user is in a post view
+  void setViewingPost(bool viewing, {String? postId}) {
+    state = state.copyWith(isViewingPost: viewing, currentPostId: postId);
+    if (!viewing) {
+      _cancelEngagementTimers();
+      state = state.copyWith(engagement: EngagementState.hidden);
+    }
   }
 
   /// Start engagement sensing timers
   /// Shows ONE action at a time in bottom bar, slow cycling:
-  /// Like (5s) → Comment (5s) → Save (5s) → Share (5s) → gone
+  /// Like (9s visible) → Comment (9s) → Save (9s) → Share (9s) → gone
   void _startEngagementTimers() {
     _cancelEngagementTimers();
 
-    // Like appears after 4s
-    _engageLikeTimer = Timer(const Duration(seconds: 4), () {
+    // Like appears after 5s, stays until 14s
+    _engageLikeTimer = Timer(const Duration(seconds: 5), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.like),
@@ -354,8 +379,8 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // Comment appears after 10s
-    _engageSaveTimer = Timer(const Duration(seconds: 10), () {
+    // Comment appears after 14s
+    _engageSaveTimer = Timer(const Duration(seconds: 14), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.comment),
@@ -363,8 +388,8 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // Save appears after 16s
-    _engageCommentTimer = Timer(const Duration(seconds: 16), () {
+    // Save appears after 23s
+    _engageCommentTimer = Timer(const Duration(seconds: 23), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.save),
@@ -372,8 +397,8 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // Share appears after 22s
-    _engageShareTimer = Timer(const Duration(seconds: 22), () {
+    // Share appears after 32s
+    _engageShareTimer = Timer(const Duration(seconds: 32), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.share),
@@ -381,8 +406,8 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // All gone after 28s
-    _engageFadeTimer = Timer(const Duration(seconds: 28), () {
+    // All gone after 41s
+    _engageFadeTimer = Timer(const Duration(seconds: 41), () {
       state = state.copyWith(
         engagement: EngagementState.hidden,
         chromeState: ChromeState.hidden,

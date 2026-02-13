@@ -429,7 +429,7 @@ class _LearnData {
 
   static const popular = [
     _CourseData(title: 'Building AI Apps with Claude', instructor: 'Anthropic Team', imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400', duration: '8h 30m', rating: 4.9, students: '12.4K', isFree: true),
-    _CourseData(title: 'Advanced Figma & Design Systems', instructor: 'Sara El Amrani', imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400', duration: '6h 15m', rating: 4.8, price: 49, students: '8.2K'),
+    _CourseData(title: 'Advanced Figma & Design Systems', instructor: 'Sara El Amrani', imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400', duration: '6h 15m', rating: 4.8, price: 49, students: '8.2K'),
     _CourseData(title: 'Full-Stack with Firebase', instructor: 'Ahmed Benali', imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400', duration: '12h', rating: 4.7, price: 79, students: '5.6K'),
     _CourseData(title: 'Growth Marketing Playbook', instructor: 'Leila Fassi', imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400', duration: '4h 45m', rating: 4.6, price: 39, students: '3.1K'),
     _CourseData(title: 'Conversational Japanese', instructor: 'Yuki Tanaka', imageUrl: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400', duration: '10h', rating: 4.9, students: '15.8K', isFree: true),
