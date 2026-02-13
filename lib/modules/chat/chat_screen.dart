@@ -41,7 +41,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   void initState() {
     super.initState();
     _avatarController = PageController(
-      viewportFraction: 0.22,
+      viewportFraction: 0.14,
       initialPage: 0,
     );
     _chatController = PageController(initialPage: 0);

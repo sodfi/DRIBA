@@ -168,21 +168,21 @@ enum ChromeState {
   engagement, // Dwell-time smart actions appearing
 }
 
+/// Which single engagement action is currently visible (only one at a time)
+enum EngagementAction { none, like, save, comment, share, profile }
+
 /// Which engagement actions are currently visible
 class EngagementState {
-  final bool showLike;
-  final bool showSave;
-  final bool showComment;
-  final bool showShare;
-  final bool showProfile;
+  final EngagementAction activeAction;
 
-  const EngagementState({
-    this.showLike = false,
-    this.showSave = false,
-    this.showComment = false,
-    this.showShare = false,
-    this.showProfile = false,
-  });
+  const EngagementState({this.activeAction = EngagementAction.none});
+
+  bool get showLike => activeAction == EngagementAction.like;
+  bool get showSave => activeAction == EngagementAction.save;
+  bool get showComment => activeAction == EngagementAction.comment;
+  bool get showShare => activeAction == EngagementAction.share;
+  bool get showProfile => activeAction == EngagementAction.profile;
+  bool get isVisible => activeAction != EngagementAction.none;
 
   static const hidden = EngagementState();
 }
@@ -246,7 +246,48 @@ class ShellNotifier extends StateNotifier<ShellState> {
   Timer? _engageFadeTimer;
   DateTime _lastContentChange = DateTime.now();
 
-  ShellNotifier() : super(const ShellState());
+  ShellNotifier() : super(const ShellState()) {
+    _loadOnboardingScreens();
+  }
+
+  /// Load optional screens selected during onboarding
+  void _loadOnboardingScreens() {
+    try {
+      // Import prefs from main.dart at runtime
+      final savedScreens = _getSelectedScreens();
+      if (savedScreens.isNotEmpty) {
+        final extras = <DribaScreen>[];
+        for (final id in savedScreens) {
+          try {
+            final screen = DribaScreen.values.firstWhere((s) => s.name == id);
+            if (!screen.isStandard && !extras.contains(screen)) {
+              extras.add(screen);
+            }
+          } catch (_) {}
+        }
+        if (extras.isNotEmpty) {
+          state = state.copyWith(
+            screenOrder: [...standardScreens, ...extras],
+          );
+        }
+      }
+    } catch (_) {}
+  }
+
+  static List<String> _getSelectedScreens() {
+    try {
+      // Access SharedPreferences synchronously (already initialized)
+      // We import this lazily to avoid circular deps
+      final prefs = _prefsInstance;
+      if (prefs != null) {
+        return prefs.getStringList('selected_screens') ?? [];
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  static dynamic _prefsInstance;
+  static void setPrefs(dynamic prefs) => _prefsInstance = prefs;
 
   /// Navigate to a specific screen
   void goToScreen(DribaScreen screen) {
@@ -298,67 +339,59 @@ class ShellNotifier extends StateNotifier<ShellState> {
   }
 
   /// Start engagement sensing timers
-  /// Like → Save → Comment → Share → Profile (then all fade)
+  /// Shows ONE action at a time, cycling: Like → Save → Comment → Share → Profile → hidden
+  /// Each appears for 3 seconds with slow fade in/out
   void _startEngagementTimers() {
     _cancelEngagementTimers();
 
-    // Like appears after 3s
+    // Like appears after 3s, visible for 3s
     _engageLikeTimer = Timer(const Duration(seconds: 3), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
-          engagement: EngagementState(showLike: true),
+          engagement: const EngagementState(activeAction: EngagementAction.like),
           chromeState: ChromeState.engagement,
         );
       }
     });
 
-    // Save appears after 5s
-    _engageSaveTimer = Timer(const Duration(seconds: 5), () {
+    // Save appears after 6s (replaces like)
+    _engageSaveTimer = Timer(const Duration(seconds: 6), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
-          engagement: EngagementState(showLike: true, showSave: true),
+          engagement: const EngagementState(activeAction: EngagementAction.save),
         );
       }
     });
 
-    // Comment appears after 8s
-    _engageCommentTimer = Timer(const Duration(seconds: 8), () {
+    // Comment appears after 9s (replaces save)
+    _engageCommentTimer = Timer(const Duration(seconds: 9), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
-          engagement: EngagementState(
-            showLike: true, showSave: true, showComment: true,
-          ),
+          engagement: const EngagementState(activeAction: EngagementAction.comment),
         );
       }
     });
 
-    // Share appears after 11s
-    _engageShareTimer = Timer(const Duration(seconds: 11), () {
+    // Share appears after 12s (replaces comment)
+    _engageShareTimer = Timer(const Duration(seconds: 12), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
-          engagement: EngagementState(
-            showLike: true, showSave: true,
-            showComment: true, showShare: true,
-          ),
+          engagement: const EngagementState(activeAction: EngagementAction.share),
         );
       }
     });
 
-    // Profile appears after 14s
-    _engageProfileTimer = Timer(const Duration(seconds: 14), () {
+    // Profile appears after 15s (replaces share)
+    _engageProfileTimer = Timer(const Duration(seconds: 15), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
-          engagement: EngagementState(
-            showLike: true, showSave: true,
-            showComment: true, showShare: true,
-            showProfile: true,
-          ),
+          engagement: const EngagementState(activeAction: EngagementAction.profile),
         );
       }
     });
 
-    // All engagement fades after 20s
-    _engageFadeTimer = Timer(const Duration(seconds: 20), () {
+    // All engagement fades after 18s
+    _engageFadeTimer = Timer(const Duration(seconds: 18), () {
       state = state.copyWith(
         engagement: EngagementState.hidden,
         chromeState: ChromeState.hidden,

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'core/theme/driba_theme.dart';
+import 'core/shell/shell_state.dart';
 import 'main_shell.dart';
 import 'modules/onboarding/onboarding_flow.dart';
 
@@ -30,6 +31,9 @@ void main() async {
   
   // Load prefs before app starts
   prefs = await SharedPreferences.getInstance();
+
+  // Pass prefs to shell so it can load onboarding screen selections
+  ShellNotifier.setPrefs(prefs);
 
   runApp(const ProviderScope(child: DribaApp()));
 }

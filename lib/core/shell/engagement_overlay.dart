@@ -6,11 +6,10 @@ import '../theme/driba_colors.dart';
 import 'shell_state.dart';
 
 // ============================================
-// ENGAGEMENT OVERLAY
-// Smart actions that appear based on dwell time.
-// Low opacity so content is never obscured.
-// Like → Save → Comment → Share → Profile
-// Each fades in independently, all fade out together.
+// ENGAGEMENT OVERLAY — v2
+// One action visible at a time. Slow fade in/out.
+// Hidden on Chat screen (chat has its own input).
+// Comment field appears prefilled with AI suggestion.
 // ============================================
 
 class EngagementOverlay extends ConsumerWidget {
@@ -23,181 +22,134 @@ class EngagementOverlay extends ConsumerWidget {
     final accent = screen.accent;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    return IgnorePointer(
-      ignoring: !engagement.showLike, // Only intercept taps when actions are visible
-      child: Stack(
-        children: [
-          // ── Right-side action column (like TikTok but transparent) ──
-          Positioned(
-            right: 16,
-            bottom: bottomPad + 80,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Profile avatar
-                _EngagementAction(
-                  visible: engagement.showProfile,
-                  delay: 0,
-                  child: _GhostCircle(
-                    size: 44,
-                    onTap: () => HapticFeedback.lightImpact(),
-                    child: Icon(Icons.person, color: Colors.white.withOpacity(0.8), size: 22),
-                  ),
-                ),
-                const SizedBox(height: 20),
+    // Hide engagement on Chat screen — it has its own input field
+    if (screen == DribaScreen.chat) return const SizedBox.shrink();
 
-                // Like
-                _EngagementAction(
-                  visible: engagement.showLike,
-                  delay: 0,
-                  child: _GhostAction(
-                    icon: Icons.favorite_outline,
-                    label: '',
-                    accent: accent,
-                    onTap: () {
-                      HapticFeedback.mediumImpact();
-                      // Toggle like
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Save
-                _EngagementAction(
-                  visible: engagement.showSave,
-                  delay: 100,
-                  child: _GhostAction(
-                    icon: Icons.bookmark_outline,
-                    label: '',
-                    accent: accent,
-                    onTap: () {
-                      HapticFeedback.mediumImpact();
-                      // Toggle save
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Share
-                _EngagementAction(
-                  visible: engagement.showShare,
-                  delay: 200,
-                  child: _GhostAction(
-                    icon: Icons.send_outlined,
-                    label: '',
-                    accent: accent,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      // Share
-                    },
-                  ),
-                ),
-              ],
-            ),
+    return Stack(
+      children: [
+        // ── Right-side: single action icon ──
+        Positioned(
+          right: 16,
+          bottom: bottomPad + 120,
+          child: _SingleActionIcon(
+            engagement: engagement,
+            accent: accent,
           ),
+        ),
 
-          // ── Bottom comment prompt ──
-          Positioned(
-            left: 16,
-            right: 80,
-            bottom: bottomPad + 24,
-            child: _EngagementAction(
-              visible: engagement.showComment,
-              delay: 0,
-              child: GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  // Open comment sheet
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.06),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white.withOpacity(0.08)),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.chat_bubble_outline, color: Colors.white.withOpacity(0.35), size: 18),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Add a comment...',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.3),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+        // ── Bottom: prefilled comment field (only when comment action is active) ──
+        Positioned(
+          left: 16,
+          right: 80,
+          bottom: bottomPad + 24,
+          child: _PrefillCommentBar(
+            visible: engagement.showComment,
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Shows exactly ONE icon at a time with slow cross-fade
+class _SingleActionIcon extends StatelessWidget {
+  final EngagementState engagement;
+  final Color accent;
+
+  const _SingleActionIcon({required this.engagement, required this.accent});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 800),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.7, end: 1.0).animate(animation),
+              child: child,
+            ),
+          );
+        },
+        child: engagement.isVisible
+            ? _buildAction(engagement.activeAction, accent)
+            : const SizedBox.shrink(key: ValueKey('empty')),
       ),
     );
   }
-}
 
-/// Individual engagement action with animated fade-in
-class _EngagementAction extends StatefulWidget {
-  final bool visible;
-  final int delay; // ms delay for stagger effect
-  final Widget child;
-
-  const _EngagementAction({
-    required this.visible,
-    this.delay = 0,
-    required this.child,
-  });
-
-  @override
-  State<_EngagementAction> createState() => _EngagementActionState();
-}
-
-class _EngagementActionState extends State<_EngagementAction>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _opacity;
-  late Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
+  Widget _buildAction(EngagementAction action, Color accent) {
+    final config = _actionConfig(action);
+    return GestureDetector(
+      key: ValueKey(action),
+      onTap: () => HapticFeedback.mediumImpact(),
+      child: Opacity(
+        opacity: 0.6,
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.08),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withOpacity(0.1)),
+          ),
+          child: Icon(config.$1, color: Colors.white, size: 22),
+        ),
+      ),
     );
-    _opacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
-    _scale = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-
-    if (widget.visible) {
-      Future.delayed(Duration(milliseconds: widget.delay), () {
-        if (mounted) _controller.forward();
-      });
-    }
   }
 
+  (IconData, String) _actionConfig(EngagementAction action) {
+    switch (action) {
+      case EngagementAction.like:
+        return (Icons.favorite_outline, 'Like');
+      case EngagementAction.save:
+        return (Icons.bookmark_outline, 'Save');
+      case EngagementAction.comment:
+        return (Icons.chat_bubble_outline, 'Comment');
+      case EngagementAction.share:
+        return (Icons.send_outlined, 'Share');
+      case EngagementAction.profile:
+        return (Icons.person_outline, 'Profile');
+      case EngagementAction.none:
+        return (Icons.circle, '');
+    }
+  }
+}
+
+/// Prefilled comment bar — appears during comment phase
+class _PrefillCommentBar extends StatefulWidget {
+  final bool visible;
+  const _PrefillCommentBar({required this.visible});
+
   @override
-  void didUpdateWidget(_EngagementAction old) {
+  State<_PrefillCommentBar> createState() => _PrefillCommentBarState();
+}
+
+class _PrefillCommentBarState extends State<_PrefillCommentBar> {
+  final _controller = TextEditingController();
+
+  static const _suggestions = [
+    'Love this! 🔥',
+    'This is amazing ✨',
+    'So inspiring 💡',
+    'Need this in my life 🙌',
+    'Incredible work 👏',
+  ];
+
+  int _suggestionIndex = 0;
+
+  @override
+  void didUpdateWidget(covariant _PrefillCommentBar old) {
     super.didUpdateWidget(old);
     if (widget.visible && !old.visible) {
-      Future.delayed(Duration(milliseconds: widget.delay), () {
-        if (mounted) _controller.forward();
-      });
-    } else if (!widget.visible && old.visible) {
-      _controller.reverse();
+      _suggestionIndex = (_suggestionIndex + 1) % _suggestions.length;
+      _controller.text = _suggestions[_suggestionIndex];
     }
   }
 
@@ -209,86 +161,77 @@ class _EngagementActionState extends State<_EngagementAction>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (_, child) {
-        if (_opacity.value < 0.01) return const SizedBox.shrink();
-        return Opacity(
-          opacity: _opacity.value * 0.65, // Max 65% opacity — never block content
-          child: Transform.scale(scale: _scale.value, child: child),
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 800),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween(
+              begin: const Offset(0, 0.3),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
         );
       },
-      child: widget.child,
+      child: widget.visible
+          ? _buildBar()
+          : const SizedBox.shrink(key: ValueKey('empty')),
     );
   }
-}
 
-/// Ghost-style action button (very transparent, unobtrusive)
-class _GhostAction extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color accent;
-  final VoidCallback onTap;
-
-  const _GhostAction({
-    required this.icon,
-    required this.label,
-    required this.accent,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
-            ),
-            child: Icon(icon, color: Colors.white, size: 22),
+  Widget _buildBar() {
+    return ClipRRect(
+      key: const ValueKey('comment_bar'),
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withOpacity(0.08)),
           ),
-          if (label.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(label, style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-/// Ghost circle button (avatar placeholder)
-class _GhostCircle extends StatelessWidget {
-  final double size;
-  final VoidCallback onTap;
-  final Widget child;
-
-  const _GhostCircle({
-    required this.size,
-    required this.onTap,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
+          child: Row(
+            children: [
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 14,
+                  ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  _controller.clear();
+                  // TODO: submit comment to Firestore
+                },
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    gradient: DribaColors.primaryGradient,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
+                ),
+              ),
+            ],
+          ),
         ),
-        child: Center(child: child),
       ),
     );
   }
