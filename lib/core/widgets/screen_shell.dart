@@ -123,7 +123,7 @@ class _DribaScreenShellState extends ConsumerState<DribaScreenShell> {
   }
 
   Widget _buildPostsView(double topPad) {
-    final postsAsync = ref.watch(fullscreenPostsProvider(widget.screenId));
+    final postsAsync = ref.watch(screenPostsProvider(widget.screenId));
 
     return postsAsync.when(
       data: (posts) {

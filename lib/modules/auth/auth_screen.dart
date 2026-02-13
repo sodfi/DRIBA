@@ -7,7 +7,7 @@ import '../../core/theme/driba_colors.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/animations/driba_animations.dart';
 import 'auth_providers.dart';
-import 'personalization_screen.dart';
+import 'auth_service.dart';
 
 /// Auth Screen — Login / Sign Up / Forgot Password
 /// Immersive glass design with animated background

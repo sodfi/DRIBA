@@ -220,8 +220,9 @@ class RatingInfo {
 class SocialLink {
   final String platform; // website, twitter, instagram, linkedin, github, tiktok
   final String url;
+  final String? username;
 
-  const SocialLink({required this.platform, required this.url});
+  const SocialLink({required this.platform, required this.url, this.username});
 
   factory SocialLink.fromMap(Map<String, dynamic> map) => SocialLink(
         platform: map['platform'] as String,

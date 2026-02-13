@@ -65,7 +65,7 @@ class DribaTheme {
       ),
       
       // Cards
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: DribaColors.glassFill,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -160,7 +160,7 @@ class DribaTheme {
       ),
       
       // Dialog
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: DribaColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
