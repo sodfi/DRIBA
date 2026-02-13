@@ -1,7 +1,8 @@
 /**
- * Driba OS — Cloud Functions Index (v3 — AI Studio + Dual Ratio)
+ * Driba OS — Cloud Functions Index (v4 — Claude Agents + In-App Assistant)
  *
  * Functions:
+ *   CLAUDE:     claudeAgentsCron, runClaudeAgents, runClaudeAgent, claudeChat
  *   AGENTS:     agentsCron, runAgents, runAgent, regenerateMedia, agentStatus
  *   AI STUDIO:  aiMediaProcess (callable from Flutter)
  *   MEDIA:      processUserMedia (auto dual-ratio on user upload)
@@ -15,7 +16,14 @@ const { FieldValue } = require("firebase-admin/firestore");
 
 admin.initializeApp();
 
-// ─── Autonomous Content Agents ──────────────────────────
+// ─── Claude-Powered Agents + In-App Assistant ────────────
+const claude = require("./claude_agent");
+exports.claudeAgentsCron = claude.claudeAgentsCron;
+exports.runClaudeAgents = claude.runClaudeAgents;
+exports.runClaudeAgent = claude.runClaudeAgent;
+exports.claudeChat = claude.claudeChat;
+
+// ─── Autonomous Content Agents (Gemini pipeline) ─────────
 const agents = require("./autonomous_agents");
 exports.agentsCron = agents.agentsCron;
 exports.runAgents = agents.runAgents;
