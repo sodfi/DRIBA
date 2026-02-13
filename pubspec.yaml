@@ -22,7 +22,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # Cloud Functions
-  cloud_functions: ^5.1.4
+  cloud_functions: ^6.0.6
 
   # Auth Providers
   google_sign_in: ^6.2.1
