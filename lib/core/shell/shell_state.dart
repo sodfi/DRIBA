@@ -339,13 +339,13 @@ class ShellNotifier extends StateNotifier<ShellState> {
   }
 
   /// Start engagement sensing timers
-  /// Shows ONE action at a time, cycling: Like → Save → Comment → Share → Profile → hidden
-  /// Each appears for 3 seconds with slow fade in/out
+  /// Shows ONE action at a time in bottom bar, slow cycling:
+  /// Like (5s) → Comment (5s) → Save (5s) → Share (5s) → gone
   void _startEngagementTimers() {
     _cancelEngagementTimers();
 
-    // Like appears after 3s, visible for 3s
-    _engageLikeTimer = Timer(const Duration(seconds: 3), () {
+    // Like appears after 4s
+    _engageLikeTimer = Timer(const Duration(seconds: 4), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.like),
@@ -354,17 +354,8 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // Save appears after 6s (replaces like)
-    _engageSaveTimer = Timer(const Duration(seconds: 6), () {
-      if (_isStillOnSameContent()) {
-        state = state.copyWith(
-          engagement: const EngagementState(activeAction: EngagementAction.save),
-        );
-      }
-    });
-
-    // Comment appears after 9s (replaces save)
-    _engageCommentTimer = Timer(const Duration(seconds: 9), () {
+    // Comment appears after 10s
+    _engageSaveTimer = Timer(const Duration(seconds: 10), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.comment),
@@ -372,8 +363,17 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // Share appears after 12s (replaces comment)
-    _engageShareTimer = Timer(const Duration(seconds: 12), () {
+    // Save appears after 16s
+    _engageCommentTimer = Timer(const Duration(seconds: 16), () {
+      if (_isStillOnSameContent()) {
+        state = state.copyWith(
+          engagement: const EngagementState(activeAction: EngagementAction.save),
+        );
+      }
+    });
+
+    // Share appears after 22s
+    _engageShareTimer = Timer(const Duration(seconds: 22), () {
       if (_isStillOnSameContent()) {
         state = state.copyWith(
           engagement: const EngagementState(activeAction: EngagementAction.share),
@@ -381,17 +381,8 @@ class ShellNotifier extends StateNotifier<ShellState> {
       }
     });
 
-    // Profile appears after 15s (replaces share)
-    _engageProfileTimer = Timer(const Duration(seconds: 15), () {
-      if (_isStillOnSameContent()) {
-        state = state.copyWith(
-          engagement: const EngagementState(activeAction: EngagementAction.profile),
-        );
-      }
-    });
-
-    // All engagement fades after 18s
-    _engageFadeTimer = Timer(const Duration(seconds: 18), () {
+    // All gone after 28s
+    _engageFadeTimer = Timer(const Duration(seconds: 28), () {
       state = state.copyWith(
         engagement: EngagementState.hidden,
         chromeState: ChromeState.hidden,

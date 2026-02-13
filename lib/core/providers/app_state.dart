@@ -96,27 +96,7 @@ final chatsProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
   );
 });
 
-// ── Content ──
-final screenPostsProvider = StreamProvider.family<List<Map<String, dynamic>>, String>((ref, screenId) {
-  return FirebaseFirestore.instance
-      .collection('posts')
-      .where('categories', arrayContains: screenId)
-      .where('status', isEqualTo: 'published')
-      .orderBy('createdAt', descending: true)
-      .limit(50)
-      .snapshots()
-      .map((snap) => snap.docs.map((d) => {'id': d.id, ...d.data()}).toList());
-});
-
-final trendingPostsProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
-  return FirebaseFirestore.instance
-      .collection('posts')
-      .where('status', isEqualTo: 'published')
-      .orderBy('engagementScore', descending: true)
-      .limit(20)
-      .snapshots()
-      .map((snap) => snap.docs.map((d) => {'id': d.id, ...d.data()}).toList());
-});
+// ── Content (providers in content_providers.dart) ──
 
 // ── UI State ──
 final dockVisibilityProvider = StateProvider<bool>((ref) => true);

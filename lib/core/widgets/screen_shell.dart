@@ -146,9 +146,29 @@ class _DribaScreenShellState extends ConsumerState<DribaScreenShell> {
       loading: () => Center(
         child: CircularProgressIndicator(color: widget.accent, strokeWidth: 2),
       ),
-      error: (_, __) => _EmptyState(
-        accent: widget.accent,
-        screenLabel: widget.screenLabel,
+      error: (err, __) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, color: widget.accent.withOpacity(0.5), size: 48),
+              const SizedBox(height: 16),
+              Text(
+                'Content loading issue',
+                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                err.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
