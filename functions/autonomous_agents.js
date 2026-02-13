@@ -33,7 +33,7 @@ const { GoogleAuth } = require("google-auth-library");
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 const bucket = admin.storage().bucket("driba-os.firebasestorage.app");
-const FV = admin.firestore.FieldValue;
+const { FieldValue: FV } = require("firebase-admin/firestore");
 
 // ─── Config ─────────────────────────────────────────────────
 

@@ -16,6 +16,7 @@ const admin = require("firebase-admin");
 const Anthropic = require("@anthropic-ai/sdk");
 const OpenAI = require("openai");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { FieldValue } = require("firebase-admin/firestore");
 
 // Initialize Firebase if not already
 if (!admin.apps.length) admin.initializeApp();
@@ -329,10 +330,10 @@ Output ONLY valid JSON:
       creatorId: creator.id,
       confidence: postData.confidence,
       isFullyGenerated: true,
-      generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      generatedAt: FieldValue.serverTimestamp(),
     },
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
   });
 
   // Log to creator's content subcollection
@@ -345,7 +346,7 @@ Output ONLY valid JSON:
       postId: postRef.id,
       topic,
       confidence: postData.confidence,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
 }
 
@@ -361,7 +362,7 @@ async function logUsage(userId, provider, model, usage) {
       model,
       inputTokens: usage?.inputTokens || 0,
       outputTokens: usage?.outputTokens || 0,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      timestamp: FieldValue.serverTimestamp(),
     });
   } catch (error) {
     console.error("Failed to log AI usage:", error);

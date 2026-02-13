@@ -11,6 +11,7 @@
 
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { FieldValue } = require("firebase-admin/firestore");
 
 admin.initializeApp();
 
@@ -76,7 +77,7 @@ exports.curateTrending = functions.pubsub
       await db.collection("global").doc("trending").set(
         {
           [screen]: top.docs.map((d) => d.id),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
         },
         { merge: true }
       );
@@ -127,7 +128,7 @@ Return ONLY JSON: {"safe":true/false,"flags":[],"action":"approve"|"reject"|"rev
         await snap.ref.update({
           status: result.safe ? "published" : "rejected",
           moderationResult: result,
-          moderatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          moderatedAt: FieldValue.serverTimestamp(),
         });
       } catch (e) {
         console.error("Moderation error:", e.message);
