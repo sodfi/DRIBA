@@ -67,3 +67,4 @@
 # Firebase related
 .firebase/
 firebase-debug.log
+functions/.env
