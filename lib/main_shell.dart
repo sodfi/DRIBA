@@ -1,14 +1,13 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/driba_colors.dart';
 import 'core/shell/shell_state.dart';
-import 'core/shell/engagement_overlay.dart';
 import 'core/shell/content_chrome.dart';
 import 'core/shell/masonry_overview.dart';
 
-// Module imports
-import 'modules/chat/chat_list_screen.dart';
+import 'modules/chat/chat_screen.dart';
 import 'modules/feed/feed_screen.dart';
 import 'modules/news/news_screen.dart';
 import 'modules/food/food_screen.dart';
@@ -21,26 +20,14 @@ import 'modules/profile/profile_screen.dart';
 import 'modules/creator/creator_screen.dart';
 
 // ============================================
-// MAIN SHELL
-// Root navigation — the OS itself.
+// MAIN SHELL v2
 //
-// Architecture:
-// ┌──────────────────────────────────┐
-// │        Masonry Overlay           │ ← Long-press (above everything)
-// │  ┌────────────────────────────┐  │
-// │  │    Content Chrome          │  │ ← Tap-to-show nav (auto-hides)
-// │  │  ┌──────────────────────┐  │  │
-// │  │  │ Engagement Overlay   │  │  │ ← Dwell-time smart actions
-// │  │  │  ┌────────────────┐  │  │  │
-// │  │  │  │  SCREEN        │  │  │  │ ← PageView (horizontal swipe)
-// │  │  │  │  (full-screen) │  │  │  │
-// │  │  │  └────────────────┘  │  │  │
-// │  │  └──────────────────────┘  │  │
-// │  └────────────────────────────┘  │
-// └──────────────────────────────────┘
-//
-// NO permanent bottom nav bar.
-// Content is king. Everything else is transient.
+// Changes:
+// - iOS-style glassmorphic bottom nav bar
+// - Persistent tab icons (Home, Discover, Create, Chat, Profile)
+// - Horizontal swipe still works between content screens
+// - No more engagement overlay (actions live on post cards now)
+// - Double-tap to like handled by post cards
 // ============================================
 
 class MainShell extends ConsumerStatefulWidget {
@@ -68,11 +55,10 @@ class _MainShellState extends ConsumerState<MainShell> {
     super.dispose();
   }
 
-  /// Resolve DribaScreen enum → actual Widget
   Widget _resolveScreen(DribaScreen screen) {
     switch (screen) {
       case DribaScreen.chat:
-        return const ChatListScreen();
+        return const ChatScreen();
       case DribaScreen.feed:
         return const FeedScreen();
       case DribaScreen.news:
@@ -90,7 +76,6 @@ class _MainShellState extends ConsumerState<MainShell> {
       case DribaScreen.learn:
         return const LearnScreen();
       default:
-        // Placeholder for add-on screens not yet built
         return _ComingSoonScreen(screen: screen);
     }
   }
@@ -107,73 +92,52 @@ class _MainShellState extends ConsumerState<MainShell> {
     final screenOrder = ref.read(shellProvider).screenOrder;
     final index = screenOrder.indexOf(screen);
     if (index >= 0) {
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeOutCubic,
-      );
+      _pageController.animateToPage(index,
+        duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic);
     }
   }
 
-  void _onTap() {
-    ref.read(shellProvider.notifier).toggleChrome();
+  void _openProfile() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const ProfileScreen(),
+        transitionsBuilder: (_, anim, __, child) =>
+          FadeTransition(opacity: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 250),
+      ),
+    );
+  }
+
+  void _openCreator() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const CreatorScreen(),
+        transitionsBuilder: (_, anim, __, child) =>
+          SlideTransition(
+            position: Tween(begin: const Offset(0, 1), end: Offset.zero)
+                .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+            child: child),
+        transitionDuration: const Duration(milliseconds: 350),
+      ),
+    );
   }
 
   void _onLongPress() {
     ref.read(shellProvider.notifier).openMasonry();
   }
 
-  void _openProfile() {
-    ref.read(shellProvider.notifier).hideChrome();
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const ProfileScreen(),
-        transitionsBuilder: (_, anim, __, child) {
-          return FadeTransition(
-            opacity: CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
-            child: SlideTransition(
-              position: Tween(begin: const Offset(0, 0.05), end: Offset.zero)
-                  .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-              child: child,
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
-  }
-
-  void _openCreator() {
-    ref.read(shellProvider.notifier).hideChrome();
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const CreatorScreen(),
-        transitionsBuilder: (_, anim, __, child) {
-          return SlideTransition(
-            position: Tween(begin: const Offset(0, 1), end: Offset.zero)
-                .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 350),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final shell = ref.watch(shellProvider);
     final screenOrder = shell.screenOrder;
+    final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    // Full immersive - no system UI chrome
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-    );
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
 
     return Scaffold(
       backgroundColor: DribaColors.background,
@@ -183,9 +147,8 @@ class _MainShellState extends ConsumerState<MainShell> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // ── Layer 1: Screen Content (PageView) ──
+          // ── Layer 1: Screen PageView ──
           GestureDetector(
-            onTap: _onTap,
             onLongPress: _onLongPress,
             behavior: HitTestBehavior.translucent,
             child: PageView.builder(
@@ -193,31 +156,31 @@ class _MainShellState extends ConsumerState<MainShell> {
               onPageChanged: _onPageChanged,
               physics: const BouncingScrollPhysics(),
               itemCount: screenOrder.length,
-              itemBuilder: (context, index) {
-                return _resolveScreen(screenOrder[index]);
-              },
+              itemBuilder: (context, index) => _resolveScreen(screenOrder[index]),
             ),
           ),
 
-          // ── Layer 2: Engagement Overlay ──
-          // Smart dwell-time actions (low opacity, never blocks content)
-          const EngagementOverlay(),
-
-          // ── Layer 3: Content Chrome ──
-          // Tap-to-show: screen name, nav dots, profile, create
-          ContentChrome(
-            onProfileTap: _openProfile,
-            onCreateTap: _openCreator,
-            pageController: _pageController,
+          // ── Layer 2: Bottom Nav Bar (iOS-style) ──
+          Positioned(
+            left: 0, right: 0, bottom: 0,
+            child: _BottomNavBar(
+              currentScreen: shell.currentScreen,
+              screenOrder: screenOrder,
+              onHomeTap: () => _navigateToScreen(DribaScreen.feed),
+              onChatTap: () => _navigateToScreen(DribaScreen.chat),
+              onCreateTap: _openCreator,
+              onDiscoverTap: () {
+                ref.read(shellProvider.notifier).openMasonry();
+              },
+              onProfileTap: _openProfile,
+              bottomPad: bottomPad,
+            ),
           ),
 
-          // ── Layer 4: Masonry Overview ──
-          // Long-press: Pinterest grid of all screens
+          // ── Layer 3: Masonry Overview ──
           if (shell.isMasonryOpen)
             MasonryOverview(
-              onDismiss: () {
-                ref.read(shellProvider.notifier).closeMasonry();
-              },
+              onDismiss: () => ref.read(shellProvider.notifier).closeMasonry(),
               onScreenTap: (screen) {
                 ref.read(shellProvider.notifier).closeMasonry(navigateTo: screen);
                 _navigateToScreen(screen);
@@ -229,45 +192,150 @@ class _MainShellState extends ConsumerState<MainShell> {
   }
 }
 
-// ── Coming Soon placeholder for add-on screens ──
-class _ComingSoonScreen extends StatelessWidget {
-  final DribaScreen screen;
-  const _ComingSoonScreen({required this.screen});
+// ============================================
+// iOS-STYLE BOTTOM NAV BAR
+// Glassmorphic, 5 tabs, always visible
+// ============================================
+
+class _BottomNavBar extends StatelessWidget {
+  final DribaScreen currentScreen;
+  final List<DribaScreen> screenOrder;
+  final VoidCallback onHomeTap;
+  final VoidCallback onChatTap;
+  final VoidCallback onCreateTap;
+  final VoidCallback onDiscoverTap;
+  final VoidCallback onProfileTap;
+  final double bottomPad;
+
+  const _BottomNavBar({
+    required this.currentScreen,
+    required this.screenOrder,
+    required this.onHomeTap,
+    required this.onChatTap,
+    required this.onCreateTap,
+    required this.onDiscoverTap,
+    required this.onProfileTap,
+    required this.bottomPad,
+  });
+
+  bool get _isHome => currentScreen == DribaScreen.feed ||
+      currentScreen == DribaScreen.news ||
+      currentScreen == DribaScreen.food ||
+      currentScreen == DribaScreen.travel ||
+      currentScreen == DribaScreen.commerce ||
+      currentScreen == DribaScreen.health ||
+      currentScreen == DribaScreen.utility;
 
   @override
   Widget build(BuildContext context) {
-    final accent = screen.accent;
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        child: Container(
+          padding: EdgeInsets.only(top: 8, bottom: bottomPad + 6, left: 8, right: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF050B14).withOpacity(0.75),
+            border: Border(
+              top: BorderSide(color: Colors.white.withOpacity(0.06), width: 0.5),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavItem(
+                icon: Icons.home_rounded,
+                label: 'Home',
+                isActive: _isHome,
+                onTap: () { HapticFeedback.selectionClick(); onHomeTap(); },
+              ),
+              _NavItem(
+                icon: Icons.explore_rounded,
+                label: 'Discover',
+                isActive: false,
+                onTap: () { HapticFeedback.selectionClick(); onDiscoverTap(); },
+              ),
+              // Create button (center, larger)
+              GestureDetector(
+                onTap: () { HapticFeedback.mediumImpact(); onCreateTap(); },
+                child: Container(
+                  width: 48, height: 48,
+                  decoration: BoxDecoration(
+                    gradient: DribaColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(color: DribaColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 2)),
+                    ],
+                  ),
+                  child: const Icon(Icons.add_rounded, color: Colors.white, size: 26),
+                ),
+              ),
+              _NavItem(
+                icon: Icons.chat_bubble_rounded,
+                label: 'Chat',
+                isActive: currentScreen == DribaScreen.chat,
+                onTap: () { HapticFeedback.selectionClick(); onChatTap(); },
+              ),
+              _NavItem(
+                icon: Icons.person_rounded,
+                label: 'Profile',
+                isActive: false,
+                onTap: () { HapticFeedback.selectionClick(); onProfileTap(); },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _NavItem({required this.icon, required this.label, required this.isActive, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 56,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: isActive ? DribaColors.primary : Colors.white.withOpacity(0.4), size: 24),
+            const SizedBox(height: 2),
+            Text(label, style: TextStyle(
+              color: isActive ? DribaColors.primary : Colors.white.withOpacity(0.35),
+              fontSize: 10, fontWeight: isActive ? FontWeight.w600 : FontWeight.w400),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ComingSoonScreen extends StatelessWidget {
+  final DribaScreen screen;
+  const _ComingSoonScreen({required this.screen});
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DribaColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 80, height: 80,
-              decoration: BoxDecoration(
-                color: accent.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Center(child: Text(screen.emoji, style: const TextStyle(fontSize: 36))),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              screen.label,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            Text(screen.emoji, style: const TextStyle(fontSize: 48)),
+            const SizedBox(height: 16),
+            Text(screen.label, style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 24, fontWeight: FontWeight.w800)),
             const SizedBox(height: 8),
-            Text(
-              'Coming soon',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.3),
-                fontSize: 15,
-              ),
-            ),
+            Text('Coming soon', style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 15)),
           ],
         ),
       ),
