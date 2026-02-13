@@ -43,7 +43,7 @@ class _MyNewsFeed extends StatelessWidget {
           const SizedBox(height: 12),
           Wrap(
             spacing: 8, runSpacing: 8,
-            children: ['Technology', 'Climate', 'Morocco', 'AI', 'Startups']
+            children: ['Technology', 'Climate', 'Science', 'AI', 'Startups']
                 .map((t) => _TopicChip(label: t))
                 .toList(),
           ),

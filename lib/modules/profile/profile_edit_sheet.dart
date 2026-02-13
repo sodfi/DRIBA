@@ -79,9 +79,9 @@ class _ProfileEditSheetState extends State<ProfileEditSheet>
     setState(() {
       _isGeneratingBio = false;
       _generatedBios.addAll([
-        '$name is a passionate ${tagline.isNotEmpty ? tagline.split('·').first.trim().toLowerCase() : 'creator'} based in Casablanca. With a focus on innovation and design, they bring a unique Moroccan perspective to every project. Always exploring the intersection of technology and culture.',
+        '$name is a passionate ${tagline.isNotEmpty ? tagline.split('·').first.trim().toLowerCase() : 'creator'} based in San Francisco. With a focus on innovation and design, they bring a unique global perspective to every project. Always exploring the intersection of technology and culture.',
         'Creative mind. Strategic thinker. ${tagline.isNotEmpty ? tagline.split('·').first.trim() : 'Builder'} by day, storyteller by night. $name believes in the power of authentic connections and building products that matter.',
-        'From the vibrant streets of Casablanca to the global stage — $name combines years of industry experience with a deep love for craft and community. Currently focused on redefining what social commerce can be.',
+        'From the vibrant vibrant world of tech to the global stage — $name combines years of industry experience with a deep love for craft and community. Currently focused on redefining what social commerce can be.',
       ]);
     });
   }

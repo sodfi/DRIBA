@@ -13,10 +13,10 @@ class ProfileDemoData {
     username: 'saradesigns',
     displayName: 'Sara El Amrani',
     bio:
-        'Product designer & creative technologist based in Casablanca. Building the future of social commerce. Passionate about bridging Moroccan craft with global design.',
+        'Product designer & creative technologist based in San Francisco. Building the future of social commerce. Passionate about bridging global craft with modern design.',
     avatarUrl: 'https://i.pravatar.cc/300?img=5',
     coverUrl: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800',
-    tagline: 'Design Lead @Driba · Ex-Google · Casablanca 🇲🇦',
+    tagline: 'Design Lead @Driba · Ex-Google · San Francisco 🌉',
     email: 'sara@driba.app',
     phone: '+212 6 12 34 56 78',
     websiteUrl: 'driba.app/@saradesigns',
@@ -95,7 +95,7 @@ class ProfileDemoData {
 
   static final List<ProfileHighlight> highlights = [
     const ProfileHighlight(
-      id: 'h1', title: 'Morocco', emoji: '🇲🇦',
+      id: 'h1', title: 'Design', emoji: '🎨',
       coverUrl: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=200',
     ),
     const ProfileHighlight(

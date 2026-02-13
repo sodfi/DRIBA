@@ -42,7 +42,7 @@ class _MyTripsView extends StatelessWidget {
           Text('Upcoming', style: TextStyle(color: Colors.white.withOpacity(0.9), fontWeight: FontWeight.w700, fontSize: 16)),
         ]),
         const SizedBox(height: 12),
-        _TripCard(destination: 'Marrakech', dates: 'Mar 15 – 20, 2026', hotel: 'Riad Yasmine', status: 'Confirmed', accent: accent),
+        _TripCard(destination: 'Kyoto', dates: 'Mar 15 – 20, 2026', hotel: 'Aman Kyoto', status: 'Confirmed', accent: accent),
         const SizedBox(height: 24),
         Row(children: [
           Icon(Icons.bookmark_outline, color: accent, size: 18),
@@ -51,9 +51,9 @@ class _MyTripsView extends StatelessWidget {
         ]),
         const SizedBox(height: 12),
         _SavedPlace(name: 'Sahara Desert Camp', location: 'Merzouga', accent: accent),
-        _SavedPlace(name: 'Essaouira Surf House', location: 'Essaouira', accent: accent),
+        _SavedPlace(name: 'Tulum Beach House', location: 'Tulum', accent: accent),
         _SavedPlace(name: 'Atlas Mountain Trek', location: 'Imlil', accent: accent),
-        _SavedPlace(name: 'Chefchaouen Blue House', location: 'Chefchaouen', accent: accent),
+        _SavedPlace(name: 'Santorini Cave Suite', location: 'Santorini', accent: accent),
         const SizedBox(height: 24),
         Row(children: [
           Icon(Icons.history, color: accent, size: 18),
@@ -61,8 +61,8 @@ class _MyTripsView extends StatelessWidget {
           Text('Past Trips', style: TextStyle(color: Colors.white.withOpacity(0.9), fontWeight: FontWeight.w700, fontSize: 16)),
         ]),
         const SizedBox(height: 12),
-        _TripCard(destination: 'Fez Medina', dates: 'Jan 5 – 8, 2026', hotel: 'Riad Fes', status: 'Completed', accent: accent),
-        _TripCard(destination: 'Essaouira', dates: 'Nov 12 – 15, 2025', hotel: 'Wind Palace', status: 'Completed', accent: accent),
+        _TripCard(destination: 'Barcelona Gothic Quarter', dates: 'Jan 5 – 8, 2026', hotel: 'Hotel Casa Camper', status: 'Completed', accent: accent),
+        _TripCard(destination: 'Lisbon', dates: 'Nov 12 – 15, 2025', hotel: 'Time Out Market Suites', status: 'Completed', accent: accent),
         const SizedBox(height: 40),
       ]),
     );

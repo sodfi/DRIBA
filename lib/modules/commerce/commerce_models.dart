@@ -174,7 +174,7 @@ class CommerceDemoData {
     isVerified: true,
     rating: 4.9,
     salesCount: 1247,
-    location: 'Casablanca',
+    location: 'London',
   );
 
   static const _sellerZaki = CommerceSeller(
@@ -194,7 +194,7 @@ class CommerceDemoData {
     isVerified: false,
     rating: 4.8,
     salesCount: 412,
-    location: 'Marrakech',
+    location: 'Milan',
   );
 
   static const _sellerRiad = CommerceSeller(
@@ -204,7 +204,7 @@ class CommerceDemoData {
     isVerified: true,
     rating: 4.6,
     salesCount: 2103,
-    location: 'Casablanca',
+    location: 'London',
   );
 
   static const _sellerYasmin = CommerceSeller(
@@ -222,9 +222,9 @@ class CommerceDemoData {
   static final List<CommerceProduct> products = [
     CommerceProduct(
       id: 'prod_1',
-      name: 'Handcrafted Moroccan Leather Bag',
+      name: 'Handcrafted Italian Leather Bag',
       description:
-          'Authentic handcrafted leather bag from the tanneries of Fez. Each piece is unique, made by master artisans using traditional techniques passed down through generations. Premium vegetable-tanned leather with brass hardware.',
+          'Authentic handcrafted leather bag from the workshops of Florence. Each piece is unique, made by master artisans using traditional techniques passed down through generations. Premium vegetable-tanned leather with brass hardware.',
       price: 89.99,
       originalPrice: 129.99,
       imageUrls: [
@@ -251,11 +251,11 @@ class CommerceDemoData {
         ]),
       ],
       highlights: [
-        '100% genuine Moroccan leather',
-        'Handcrafted by master artisans in Fez',
+        '100% genuine Italian leather',
+        'Handcrafted by master artisans in Tuscany',
         'Brass hardware with antique finish',
         'Interior zip pocket + phone slot',
-        'Ships from Marrakech within 2-3 days',
+        'Ships from Florence within 3-5 days',
       ],
       reviews: _bagReviews,
     ),
@@ -326,7 +326,7 @@ class CommerceDemoData {
       id: 'prod_4',
       name: 'Abstract Geometric Wall Art — Set of 3',
       description:
-          'Museum-quality giclée prints on premium cotton canvas. Modern abstract geometric designs inspired by Moroccan zellige patterns. Includes hanging hardware. Each canvas is 40x60cm.',
+          'Museum-quality giclée prints on premium cotton canvas. Modern abstract geometric designs inspired by geometric patterns. Includes hanging hardware. Each canvas is 40x60cm.',
       price: 129.00,
       imageUrls: [
         'https://images.unsplash.com/photo-1549490349-8643362247b5?w=600',
@@ -341,7 +341,7 @@ class CommerceDemoData {
         'Set of 3 canvases (40x60cm each)',
         'Museum-quality giclée prints',
         'Premium 350gsm cotton canvas',
-        'Inspired by Moroccan zellige',
+        'Inspired by geometric art',
         'Hanging hardware included',
       ],
     ),
@@ -428,9 +428,9 @@ class CommerceDemoData {
     ),
     CommerceProduct(
       id: 'prod_8',
-      name: 'Handwoven Berber Rug — Atlas Mountains',
+      name: 'Handwoven Turkish Kilim Rug — Atlas Mountains',
       description:
-          'Authentic Berber rug handwoven by artisans in the Middle Atlas Mountains. Each rug tells a story through its unique symbols and patterns. 100% virgin wool, natural dyes.',
+          'Authentic kilim rug handwoven by master artisans in Cappadocia. Each rug tells a story through its unique symbols and patterns. 100% virgin wool, natural dyes.',
       price: 349.00,
       imageUrls: [
         'https://images.unsplash.com/photo-1600166898405-da9535204843?w=600',

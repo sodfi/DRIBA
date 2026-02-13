@@ -21,6 +21,12 @@ dependencies:
   # State Management
   flutter_riverpod: ^2.6.1
 
+  # Cloud Functions
+  cloud_functions: ^5.1.4
+
+  # Auth Providers
+  google_sign_in: ^6.2.1
+
   # Media
   video_player: ^2.8.2
   cached_network_image: ^3.3.1

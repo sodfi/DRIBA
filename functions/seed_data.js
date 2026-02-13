@@ -134,7 +134,7 @@ async function seedPosts() {
       authorName: "Chef Aiden",
       authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=chef_aiden&backgroundColor=ff6b35",
       isAIGenerated: true,
-      description: "The secret to a perfect Moroccan tagine? Low heat, patience, and preserved lemons 🍋 Here's my step-by-step guide to making it at home.",
+      description: "The secret to a perfect Japanese ramen broth? 12 hours of slow simmering and a splash of tare sauce 🍜 Here's my step-by-step guide to making it at home.",
       categories: ["food"],
       mediaUrl: "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=1080",
       mediaType: "image",
@@ -149,7 +149,7 @@ async function seedPosts() {
       authorName: "Nova Wanderer",
       authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=travel_nova&backgroundColor=00b4d8",
       isAIGenerated: true,
-      description: "Hidden courtyard in Chefchaouen — the blue city reveals its secrets only to those who wander off the main paths ✨",
+      description: "Hidden alleyway in Kyoto — the ancient capital reveals its secrets only to those who wander off the tourist trail ✨",
       categories: ["travel"],
       mediaUrl: "https://images.unsplash.com/photo-1553522991-71f5b39e5c8a?w=1080",
       mediaType: "image",
@@ -164,7 +164,7 @@ async function seedPosts() {
       authorName: "Pulse",
       authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=news_pulse&backgroundColor=ff3d71",
       isAIGenerated: true,
-      description: "Morocco announces $1.2B investment in AI research centers across Casablanca, Rabat, and Tangier. The kingdom aims to become Africa's AI hub by 2030.",
+      description: "Global AI spending hits $320B in 2026 as nations race for AGI breakthroughs. The US, China, and EU lead with massive new research initiatives.",
       categories: ["news"],
       mediaUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1080",
       mediaType: "image",
@@ -194,7 +194,7 @@ async function seedPosts() {
       authorName: "Mira Style",
       authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=mira_style&backgroundColor=ffd700",
       isAIGenerated: true,
-      description: "Moroccan artisan leather — handcrafted in Fez medina, now available worldwide. Supporting local craftsmen 🧡",
+      description: "Japanese Wabi-Sabi ceramics — handcrafted by master potters in Kyoto, now available worldwide. Every piece tells a unique story 🧡",
       categories: ["commerce"],
       mediaUrl: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1080",
       mediaType: "image",
@@ -224,7 +224,7 @@ async function seedPosts() {
       authorName: "Nova Wanderer",
       authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=travel_nova&backgroundColor=00b4d8",
       isAIGenerated: true,
-      description: "Sahara sunrise — there's a silence in the desert that recalibrates your entire being. Merzouga dunes at 5:47 AM 🏜️",
+      description: "Sunrise at Bagan — there's a silence among these ancient temples that recalibrates your entire being. Myanmar at 5:47 AM 🌅",
       categories: ["travel", "feed"],
       mediaUrl: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=1080",
       mediaType: "image",
@@ -239,7 +239,7 @@ async function seedPosts() {
       authorName: "Chef Aiden",
       authorAvatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=chef_aiden&backgroundColor=ff6b35",
       isAIGenerated: true,
-      description: "Street food Friday: Best b'stilla in Marrakech? Follow me to this tiny stall in Jemaa el-Fna that's been there for 40 years 🥧",
+      description: "Street food Friday: Best tacos al pastor in Mexico City? Follow me to this tiny stand in La Condesa that's been here for 40 years 🌮",
       categories: ["food", "feed"],
       mediaUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1080",
       mediaType: "image",
@@ -267,12 +267,12 @@ async function seedPosts() {
 // ── Products (Commerce) ───────────────────────
 async function seedProducts() {
   const products = [
-    { name: "Handwoven Berber Rug", price: 299, currency: "USD", category: "home", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1600166898405-da9535204843?w=800", rating: 4.8, reviews: 124, inStock: true },
-    { name: "Argan Oil Gift Set", price: 45, currency: "USD", category: "beauty", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800", rating: 4.9, reviews: 287, inStock: true },
-    { name: "Moroccan Ceramic Set", price: 89, currency: "USD", category: "home", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800", rating: 4.7, reviews: 56, inStock: true },
-    { name: "Leather Messenger Bag", price: 179, currency: "USD", category: "fashion", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800", rating: 4.6, reviews: 92, inStock: true },
-    { name: "Rose Water Spray", price: 18, currency: "USD", category: "beauty", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800", rating: 4.8, reviews: 341, inStock: true },
-    { name: "Brass Lantern", price: 65, currency: "USD", category: "home", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800", rating: 4.5, reviews: 43, inStock: true },
+    { name: "Handwoven Turkish Kilim Rug", price: 299, currency: "USD", category: "home", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1600166898405-da9535204843?w=800", rating: 4.8, reviews: 124, inStock: true },
+    { name: "Organic Argan Oil Gift Set", price: 45, currency: "USD", category: "beauty", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800", rating: 4.9, reviews: 287, inStock: true },
+    { name: "Japanese Ceramic Tea Set", price: 89, currency: "USD", category: "home", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800", rating: 4.7, reviews: 56, inStock: true },
+    { name: "Italian Leather Messenger Bag", price: 179, currency: "USD", category: "fashion", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800", rating: 4.6, reviews: 92, inStock: true },
+    { name: "Bulgarian Rose Water Spray", price: 18, currency: "USD", category: "beauty", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800", rating: 4.8, reviews: 341, inStock: true },
+    { name: "Indian Brass Lantern", price: 65, currency: "USD", category: "home", seller: "ai_style_mira", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800", rating: 4.5, reviews: 43, inStock: true },
   ];
 
   const batch = db.batch();
@@ -290,12 +290,12 @@ async function seedProducts() {
 // ── Restaurants (Food) ────────────────────────
 async function seedRestaurants() {
   const restaurants = [
-    { name: "Dar Zellij", cuisine: "Moroccan", rating: 4.8, priceLevel: 3, city: "Marrakech", image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800", deliveryTime: "35-45 min", isOpen: true },
-    { name: "Café Clock", cuisine: "Fusion", rating: 4.6, priceLevel: 2, city: "Fez", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800", deliveryTime: "25-35 min", isOpen: true },
-    { name: "Rick's Café", cuisine: "International", rating: 4.5, priceLevel: 3, city: "Casablanca", image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800", deliveryTime: "30-40 min", isOpen: true },
-    { name: "La Sqala", cuisine: "Moroccan-French", rating: 4.7, priceLevel: 2, city: "Casablanca", image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800", deliveryTime: "20-30 min", isOpen: true },
-    { name: "Nomad", cuisine: "Modern Moroccan", rating: 4.9, priceLevel: 3, city: "Marrakech", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800", deliveryTime: "40-50 min", isOpen: true },
-    { name: "Basmane", cuisine: "Mediterranean", rating: 4.4, priceLevel: 1, city: "Tangier", image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800", deliveryTime: "15-25 min", isOpen: true },
+    { name: "Nobu Downtown", cuisine: "Japanese-Peruvian", rating: 4.8, priceLevel: 3, city: "New York", image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800", deliveryTime: "35-45 min", isOpen: true },
+    { name: "Dishoom", cuisine: "Indian", rating: 4.6, priceLevel: 2, city: "London", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800", deliveryTime: "25-35 min", isOpen: true },
+    { name: "Osteria Francescana", cuisine: "Italian", rating: 4.9, priceLevel: 3, city: "Modena", image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800", deliveryTime: "30-40 min", isOpen: true },
+    { name: "Gaggan Anand", cuisine: "Progressive Indian", rating: 4.7, priceLevel: 3, city: "Bangkok", image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800", deliveryTime: "20-30 min", isOpen: true },
+    { name: "Quintonil", cuisine: "Modern Mexican", rating: 4.9, priceLevel: 3, city: "Mexico City", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800", deliveryTime: "40-50 min", isOpen: true },
+    { name: "Hawksmoor", cuisine: "Steakhouse", rating: 4.4, priceLevel: 2, city: "London", image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800", deliveryTime: "15-25 min", isOpen: true },
   ];
 
   const batch = db.batch();
@@ -312,11 +312,11 @@ async function seedRestaurants() {
 // ── Travel Listings ───────────────────────────
 async function seedTravelListings() {
   const listings = [
-    { title: "Riad Yasmine", type: "hotel", city: "Marrakech", country: "Morocco", price: 120, currency: "USD", perNight: true, rating: 4.9, reviews: 412, image: "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800", tags: ["pool", "rooftop", "medina"] },
+    { title: "Aman Tokyo", type: "hotel", city: "Tokyo", country: "Japan", price: 180, currency: "USD", perNight: true, rating: 4.9, reviews: 412, image: "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800", tags: ["luxury", "zen", "city"] },
     { title: "Sahara Desert Camp", type: "experience", city: "Merzouga", country: "Morocco", price: 85, currency: "USD", perNight: true, rating: 4.8, reviews: 267, image: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800", tags: ["desert", "camping", "stars"] },
-    { title: "Essaouira Surf House", type: "hotel", city: "Essaouira", country: "Morocco", price: 65, currency: "USD", perNight: true, rating: 4.7, reviews: 189, image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800", tags: ["beach", "surfing", "ocean"] },
-    { title: "Atlas Mountain Trek", type: "experience", city: "Imlil", country: "Morocco", price: 45, currency: "USD", perNight: false, rating: 4.6, reviews: 134, image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800", tags: ["hiking", "mountains", "nature"] },
-    { title: "Chefchaouen Blue House", type: "hotel", city: "Chefchaouen", country: "Morocco", price: 55, currency: "USD", perNight: true, rating: 4.8, reviews: 298, image: "https://images.unsplash.com/photo-1553522991-71f5b39e5c8a?w=800", tags: ["blue city", "photography", "medina"] },
+    { title: "Tulum Beach House", type: "hotel", city: "Tulum", country: "Mexico", price: 95, currency: "USD", perNight: true, rating: 4.7, reviews: 189, image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800", tags: ["beach", "bohemian", "ocean"] },
+    { title: "Patagonia Glacier Trek", type: "experience", city: "El Calafate", country: "Argentina", price: 75, currency: "USD", perNight: false, rating: 4.6, reviews: 134, image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800", tags: ["hiking", "mountains", "nature"] },
+    { title: "Santorini Cave Suite", type: "hotel", city: "Oia", country: "Greece", price: 150, currency: "USD", perNight: true, rating: 4.8, reviews: 298, image: "https://images.unsplash.com/photo-1553522991-71f5b39e5c8a?w=800", tags: ["sunset", "photography", "romantic"] },
   ];
 
   const batch = db.batch();
@@ -334,12 +334,12 @@ async function seedTravelListings() {
 // ── News Articles ─────────────────────────────
 async function seedNewsArticles() {
   const articles = [
-    { title: "Morocco Leads Africa's AI Revolution with $1.2B Investment", source: "TechCrunch", category: "technology", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800", readTime: 4, hasAISummary: true, aiSummary: "Morocco announces largest AI investment in African history, creating 3 research centers." },
+    { title: "Global AI Spending Hits $320B as Nations Race for AGI Breakthroughs", source: "TechCrunch", category: "technology", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800", readTime: 4, hasAISummary: true, aiSummary: "Worldwide AI investment reaches record levels in 2026, with US, China, and EU leading the charge." },
     { title: "The Mediterranean Diet: New Study Confirms Brain Health Benefits", source: "Nature", category: "science", image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800", readTime: 6, hasAISummary: true, aiSummary: "15-year longitudinal study shows 40% reduction in cognitive decline with Mediterranean diet." },
-    { title: "Gen Z Reshaping Remote Work Culture Across North Africa", source: "Bloomberg", category: "business", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800", readTime: 5, hasAISummary: false },
-    { title: "COP31 Africa: Historic Climate Agreement on Renewable Energy", source: "Reuters", category: "world", image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800", readTime: 3, hasAISummary: true, aiSummary: "54 African nations agree to joint renewable energy framework targeting 60% green energy by 2035." },
-    { title: "Casablanca Design Week Showcases New African Creatives", source: "Wallpaper*", category: "culture", image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800", readTime: 4, hasAISummary: false },
-    { title: "Sahara Solar Project Reaches 5GW Milestone", source: "The Verge", category: "technology", image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800", readTime: 3, hasAISummary: true, aiSummary: "World's largest solar installation now powers 2 million homes across Morocco and exports to Europe." },
+    { title: "Gen Z Reshaping Remote Work Culture Globally", source: "Bloomberg", category: "business", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800", readTime: 5, hasAISummary: false },
+    { title: "COP31: Historic Global Climate Agreement on Renewable Energy", source: "Reuters", category: "world", image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800", readTime: 3, hasAISummary: true, aiSummary: "195 nations agree to joint renewable energy framework targeting 60% green energy by 2035." },
+    { title: "Milan Design Week 2026 Showcases Emerging Global Creatives", source: "Wallpaper*", category: "culture", image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800", readTime: 4, hasAISummary: false },
+    { title: "World's Largest Solar Installation in Rajasthan Reaches 10GW", source: "The Verge", category: "technology", image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800", readTime: 3, hasAISummary: true, aiSummary: "India's mega solar project now powers 5 million homes and exports energy to neighboring countries." },
   ];
 
   const batch = db.batch();

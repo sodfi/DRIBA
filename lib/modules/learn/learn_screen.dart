@@ -432,7 +432,7 @@ class _LearnData {
     _CourseData(title: 'Advanced Figma & Design Systems', instructor: 'Sara El Amrani', imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400', duration: '6h 15m', rating: 4.8, price: 49, students: '8.2K'),
     _CourseData(title: 'Full-Stack with Firebase', instructor: 'Ahmed Benali', imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400', duration: '12h', rating: 4.7, price: 79, students: '5.6K'),
     _CourseData(title: 'Growth Marketing Playbook', instructor: 'Leila Fassi', imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400', duration: '4h 45m', rating: 4.6, price: 39, students: '3.1K'),
-    _CourseData(title: 'Moroccan Arabic (Darija)', instructor: 'Youssef Tazi', imageUrl: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400', duration: '10h', rating: 4.9, students: '15.8K', isFree: true),
+    _CourseData(title: 'Conversational Japanese', instructor: 'Yuki Tanaka', imageUrl: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400', duration: '10h', rating: 4.9, students: '15.8K', isFree: true),
     _CourseData(title: 'Personal Finance & Investing', instructor: 'Nadia Chraibi', imageUrl: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400', duration: '5h 20m', rating: 4.5, price: 29, students: '4.2K'),
   ];
 

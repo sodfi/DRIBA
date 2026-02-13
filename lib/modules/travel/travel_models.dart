@@ -151,10 +151,10 @@ class TravelDemoData {
   static final List<Destination> destinations = [
     Destination(
       id: 'd1',
-      name: 'Marrakech',
-      country: 'Morocco',
+      name: 'Kyoto',
+      country: 'Japan',
       imageUrl: 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=600',
-      description: 'The Red City — a sensory feast of spice markets, riads, and the Atlas Mountains. Explore the medina, relax in hidden gardens, and experience Moroccan hospitality at its finest.',
+      description: 'The Ancient Capital — a serene blend of temples, bamboo groves, and zen gardens. Explore traditional tea houses, marvel at golden pavilions, and experience Japanese hospitality at its finest.',
       rating: 4.8,
       reviewCount: 2340,
       priceFrom: '\$89/night',
@@ -167,7 +167,7 @@ class TravelDemoData {
           id: 'h1', name: 'Riad Jardin Secret', stars: 5,
           imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=500',
           pricePerNight: 189, originalPrice: 249, rating: 4.9, reviewCount: 412,
-          location: 'Medina', amenities: ['Pool', 'Spa', 'Rooftop', 'WiFi', 'Breakfast'],
+          location: 'City Center', amenities: ['Pool', 'Spa', 'Rooftop', 'WiFi', 'Breakfast'],
           dealText: '24% OFF',
         ),
         Hotel(
@@ -192,7 +192,7 @@ class TravelDemoData {
           hostName: 'Hassan', tags: ['adventure', 'sunset'],
         ),
         Experience(
-          id: 'e2', title: 'Moroccan Cooking Class & Market Tour',
+          id: 'e2', title: 'Sushi Making Class & Nishiki Market Tour',
           imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500',
           price: 65, duration: '4 hours', rating: 4.8, reviewCount: 321,
           hostName: 'Fatima', tags: ['cultural', 'food'],
@@ -232,10 +232,10 @@ class TravelDemoData {
     ),
     Destination(
       id: 'd3',
-      name: 'Chefchaouen',
-      country: 'Morocco',
+      name: 'Santorini',
+      country: 'Japan',
       imageUrl: 'https://images.unsplash.com/photo-1553540017-f2956d979f39?w=600',
-      description: 'The Blue Pearl of Morocco — a dreamlike village painted in every shade of blue. Tucked in the Rif Mountains, it\'s the perfect escape from the world.',
+      description: 'The Jewel of the Aegean — a dreamlike island of white-washed villages and blue-domed churches. Perched on volcanic cliffs, it\'s the perfect escape from the world.',
       rating: 4.7,
       reviewCount: 1560,
       priceFrom: '\$45/night',
@@ -247,7 +247,7 @@ class TravelDemoData {
           id: 'h5', name: 'Casa Perleta', stars: 3,
           imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500',
           pricePerNight: 55, rating: 4.7, reviewCount: 189,
-          location: 'Old Medina', amenities: ['Terrace', 'WiFi', 'Breakfast'],
+          location: 'Old Town', amenities: ['Terrace', 'WiFi', 'Breakfast'],
         ),
       ],
       experiences: [
@@ -292,8 +292,8 @@ class TravelDemoData {
     ),
     Destination(
       id: 'd5',
-      name: 'Essaouira',
-      country: 'Morocco',
+      name: 'Lisbon',
+      country: 'Japan',
       imageUrl: 'https://images.unsplash.com/photo-1569383746724-6f1b882b8f46?w=600',
       description: 'Wind City on the Atlantic — a bohemian coastal town with Portuguese fortifications, world-class kitesurfing, and the freshest seafood you\'ll ever taste.',
       rating: 4.6,
@@ -307,7 +307,7 @@ class TravelDemoData {
           id: 'h7', name: 'L\'Heure Bleue Palais', stars: 5,
           imageUrl: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=500',
           pricePerNight: 175, rating: 4.7, reviewCount: 312,
-          location: 'Medina', amenities: ['Pool', 'Cinema', 'Spa', 'Rooftop'],
+          location: 'City Center', amenities: ['Pool', 'Cinema', 'Spa', 'Rooftop'],
         ),
       ],
       experiences: [

@@ -145,7 +145,7 @@ class FoodDemoData {
   static const List<FoodCategory> categories = [
     FoodCategory(id: 'all', name: 'All', emoji: '🍽️'),
     FoodCategory(id: 'nearby', name: 'Nearby', emoji: '📍'),
-    FoodCategory(id: 'moroccan', name: 'Moroccan', emoji: '🇲🇦'),
+    FoodCategory(id: 'asian', name: 'Asian', emoji: '🍜'),
     FoodCategory(id: 'pizza', name: 'Pizza', emoji: '🍕'),
     FoodCategory(id: 'sushi', name: 'Sushi', emoji: '🍣'),
     FoodCategory(id: 'burger', name: 'Burgers', emoji: '🍔'),
@@ -159,7 +159,7 @@ class FoodDemoData {
   static final List<FoodRestaurant> restaurants = [
     FoodRestaurant(
       id: 'r1',
-      name: 'Le Jardin Marrakech',
+      name: 'The Golden Dragon',
       coverUrl: 'https://images.unsplash.com/photo-1540914124281-342587941389?w=600',
       rating: 4.8,
       reviewCount: 342,
@@ -168,11 +168,11 @@ class FoodDemoData {
       deliveryFee: 0,
       minimumOrder: 15,
       distance: 1.2,
-      cuisineTags: ['moroccan', 'halal', 'nearby'],
+      cuisineTags: ['asian', 'popular', 'nearby'],
       isFeatured: true,
       promoText: 'FREE DELIVERY',
       dietaryOptions: ['halal', 'vegetarian-options'],
-      menu: _moroccanMenu,
+      menu: _asianMenu,
     ),
     FoodRestaurant(
       id: 'r2',
@@ -249,7 +249,7 @@ class FoodDemoData {
 
   // ── Menus ─────────────────────────────────
 
-  static const _moroccanMenu = [
+  static const _asianMenu = [
     FoodMenuSection(name: 'Signature Dishes', items: [
       FoodMenuItem(
         id: 'm1', name: 'Royal Couscous', price: 16.99,
@@ -258,8 +258,8 @@ class FoodDemoData {
         tags: ['popular'], calories: 680,
       ),
       FoodMenuItem(
-        id: 'm2', name: 'Chicken Tagine', price: 14.99,
-        description: 'Slow-cooked with preserved lemons, olives, and Moroccan spices',
+        id: 'm2', name: 'Chicken Teriyaki', price: 14.99,
+        description: 'Grilled chicken glazed with homemade teriyaki sauce and sesame seeds',
         imageUrl: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=400',
         tags: ['popular', 'spicy'], calories: 520,
       ),
@@ -283,7 +283,7 @@ class FoodDemoData {
     ]),
     FoodMenuSection(name: 'Drinks', items: [
       FoodMenuItem(
-        id: 'm6', name: 'Moroccan Mint Tea', price: 3.99,
+        id: 'm6', name: 'Japanese Matcha Latte', price: 3.99,
         description: 'Fresh mint, gunpowder green tea, poured from height',
         calories: 60,
       ),
