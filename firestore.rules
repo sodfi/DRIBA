@@ -2,20 +2,22 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isSignedIn() { return request.auth != null; }
+    function isFullUser() { return isSignedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous'; }
     function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
 
     match /users/{userId} {
       allow read: if isSignedIn();
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
+      allow update: if isOwner(userId) && isFullUser();
     }
     match /posts/{postId} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
+      allow create: if isFullUser();
+      allow update: if isFullUser();
       allow delete: if isOwner(resource.data.author);
       match /comments/{commentId} {
-        allow read, create: if isSignedIn();
+        allow read: if isSignedIn();
+        allow create: if isFullUser();
         allow update, delete: if isOwner(resource.data.userId);
       }
     }
@@ -26,20 +28,24 @@ service cloud.firestore {
     match /health_tips/{id} { allow read: if isSignedIn(); allow write: if false; }
     match /chats/{chatId} {
       allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && request.auth.uid in resource.data.participants;
-      match /messages/{msgId} { allow read, create: if isSignedIn(); }
+      allow create: if isFullUser();
+      allow update: if isFullUser() && request.auth.uid in resource.data.participants;
+      match /messages/{msgId} {
+        allow read: if isSignedIn();
+        allow create: if isFullUser();
+      }
     }
     match /orders/{id} {
       allow read: if isOwner(resource.data.userId);
-      allow create: if isSignedIn();
-      allow update: if isOwner(resource.data.userId);
+      allow create: if isFullUser();
+      allow update: if isOwner(resource.data.userId) && isFullUser();
     }
     match /activities/{id} {
-      allow read, write: if isOwner(resource.data.userId);
+      allow read, write: if isOwner(resource.data.userId) && isFullUser();
     }
     match /user_health/{userId}/{document=**} {
-      allow read, write: if isOwner(userId);
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && isFullUser();
     }
     match /global/{id} { allow read: if isSignedIn(); allow write: if false; }
     match /moderation_queue/{id} { allow read, write: if false; }
