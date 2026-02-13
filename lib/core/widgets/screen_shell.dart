@@ -274,8 +274,6 @@ class DribaPostCard extends StatefulWidget {
 }
 
 class _DribaPostCardState extends State<DribaPostCard> with TickerProviderStateMixin {
-  bool _liked = false;
-  bool _saved = false;
   bool _showHeart = false;
   late AnimationController _heartAnim;
 
@@ -297,46 +295,18 @@ class _DribaPostCardState extends State<DribaPostCard> with TickerProviderStateM
     super.dispose();
   }
 
-  bool _isAnonymous() {
-    final user = FirebaseAuth.instance.currentUser;
-    return user == null || user.isAnonymous;
-  }
-
   void _doubleTapLike() {
     HapticFeedback.mediumImpact();
-    setState(() { _liked = true; _showHeart = true; });
+    setState(() => _showHeart = true);
     _heartAnim.forward();
-    _updatePost('likes');
-  }
-
-  void _toggleLike() {
-    HapticFeedback.lightImpact();
-    setState(() => _liked = !_liked);
-    if (_liked) _updatePost('likes');
-  }
-
-  void _toggleSave() {
-    HapticFeedback.lightImpact();
-    setState(() => _saved = !_saved);
-    if (_saved) _updatePost('saves');
-  }
-
-  void _onShare() {
-    HapticFeedback.lightImpact();
-    _updatePost('shares');
-  }
-
-  void _onComment() {
-    HapticFeedback.lightImpact();
-    // Could open comment sheet here
-  }
-
-  void _updatePost(String field) {
-    if (_isAnonymous()) return;
-    try {
-      FirebaseFirestore.instance.collection('posts').doc(widget.post.id)
-          .update({field: FieldValue.increment(1)});
-    } catch (_) {}
+    // Write to Firestore
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && !user.isAnonymous) {
+      try {
+        FirebaseFirestore.instance.collection('posts').doc(widget.post.id)
+            .update({'likes': FieldValue.increment(1)});
+      } catch (_) {}
+    }
   }
 
   @override
@@ -387,26 +357,10 @@ class _DribaPostCardState extends State<DribaPostCard> with TickerProviderStateM
             ),
           ),
 
-          // ── Right side action buttons (always visible) ──
-          Positioned(
-            right: 12,
-            bottom: bottomPad + 120,
-            child: _ActionButtons(
-              post: post,
-              accent: accent,
-              liked: _liked,
-              saved: _saved,
-              onLike: _toggleLike,
-              onComment: _onComment,
-              onSave: _toggleSave,
-              onShare: _onShare,
-            ),
-          ),
-
-          // ── Content overlay (left side) ──
+          // ── Content overlay (full width) ──
           Positioned(
             left: 20,
-            right: 70,
+            right: 20,
             bottom: bottomPad + 90,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,92 +453,6 @@ class _DribaPostCardState extends State<DribaPostCard> with TickerProviderStateM
     if (diff.inHours < 24) return '${diff.inHours}h ago';
     if (diff.inDays < 7) return '${diff.inDays}d ago';
     return '${dt.month}/${dt.day}';
-  }
-}
-
-// ── TikTok-style action buttons (always visible) ──
-
-class _ActionButtons extends StatelessWidget {
-  final DribaPost post;
-  final Color accent;
-  final bool liked;
-  final bool saved;
-  final VoidCallback onLike;
-  final VoidCallback onComment;
-  final VoidCallback onSave;
-  final VoidCallback onShare;
-
-  const _ActionButtons({
-    required this.post, required this.accent,
-    required this.liked, required this.saved,
-    required this.onLike, required this.onComment,
-    required this.onSave, required this.onShare,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _ActionBtn(
-          icon: liked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-          label: _formatCount(post.likes + (liked ? 1 : 0)),
-          color: liked ? Colors.red : Colors.white,
-          onTap: onLike,
-        ),
-        const SizedBox(height: 20),
-        _ActionBtn(
-          icon: Icons.chat_bubble_outline_rounded,
-          label: _formatCount(post.comments),
-          color: Colors.white,
-          onTap: onComment,
-        ),
-        const SizedBox(height: 20),
-        _ActionBtn(
-          icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-          label: _formatCount(post.saves + (saved ? 1 : 0)),
-          color: saved ? const Color(0xFFFFD700) : Colors.white,
-          onTap: onSave,
-        ),
-        const SizedBox(height: 20),
-        _ActionBtn(
-          icon: Icons.send_rounded,
-          label: _formatCount(post.shares),
-          color: Colors.white,
-          onTap: onShare,
-        ),
-      ],
-    );
-  }
-
-  String _formatCount(int n) {
-    if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
-    if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}K';
-    return n.toString();
-  }
-}
-
-class _ActionBtn extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ActionBtn({required this.icon, required this.label, required this.color, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 30),
-          const SizedBox(height: 2),
-          Text(label, style: TextStyle(color: color.withOpacity(0.8), fontSize: 11, fontWeight: FontWeight.w600)),
-        ],
-      ),
-    );
   }
 }
 

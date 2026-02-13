@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/driba_colors.dart';
 import 'core/shell/shell_state.dart';
 import 'core/shell/content_chrome.dart';
+import 'core/shell/engagement_overlay.dart';
 import 'core/shell/masonry_overview.dart';
 
 import 'modules/chat/chat_screen.dart';
@@ -149,6 +150,7 @@ class _MainShellState extends ConsumerState<MainShell> {
         children: [
           // ── Layer 1: Screen PageView ──
           GestureDetector(
+            onTap: () => ref.read(shellProvider.notifier).toggleChrome(),
             onLongPress: _onLongPress,
             behavior: HitTestBehavior.translucent,
             child: PageView.builder(
@@ -160,7 +162,17 @@ class _MainShellState extends ConsumerState<MainShell> {
             ),
           ),
 
-          // ── Layer 2: Bottom Nav Bar (iOS-style) ──
+          // ── Layer 2: Engagement Overlay (timed actions) ──
+          const EngagementOverlay(),
+
+          // ── Layer 3: Content Chrome (tap-to-show with action fallbacks) ──
+          ContentChrome(
+            onProfileTap: _openProfile,
+            onCreateTap: _openCreator,
+            pageController: _pageController,
+          ),
+
+          // ── Layer 4: Bottom Nav Bar (iOS-style) ──
           Positioned(
             left: 0, right: 0, bottom: 0,
             child: _BottomNavBar(
@@ -177,7 +189,7 @@ class _MainShellState extends ConsumerState<MainShell> {
             ),
           ),
 
-          // ── Layer 3: Masonry Overview ──
+          // ── Layer 5: Masonry Overview ──
           if (shell.isMasonryOpen)
             MasonryOverview(
               onDismiss: () => ref.read(shellProvider.notifier).closeMasonry(),
