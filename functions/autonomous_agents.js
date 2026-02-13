@@ -76,7 +76,7 @@ You cover global cuisines — from Tokyo ramen to Mexican tacos to Italian pasta
     ],
     categories: ["food", "feed"],
     crossCategories: { healthy: ["food", "health", "feed"] },
-    schedule: "every 4 hours",
+    schedule: "every 5 minutes",
     // Cloud TTS voice — warm male
     voice: { languageCode: "en-US", name: "en-US-Neural2-D", ssmlGender: "MALE" },
   },
@@ -100,7 +100,7 @@ You cover destinations worldwide — from Southeast Asia to South America to Eur
       "solo travel best destinations",
     ],
     categories: ["travel", "feed"],
-    schedule: "every 4 hours",
+    schedule: "every 5 minutes",
     voice: { languageCode: "en-US", name: "en-US-Neural2-F", ssmlGender: "FEMALE" },
   },
 
@@ -124,7 +124,7 @@ Cover global tech, climate, business, science, and geopolitics. Always cite sour
     ],
     categories: ["news", "feed"],
     crossCategories: { health: ["news", "health", "feed"] },
-    schedule: "every 2 hours",
+    schedule: "every 5 minutes",
     voice: { languageCode: "en-US", name: "en-US-Neural2-A", ssmlGender: "MALE" },
   },
 
@@ -146,7 +146,7 @@ Cite studies when possible. No medical advice — empowerment through knowledge.
     ],
     categories: ["health", "feed"],
     crossCategories: { nutrition: ["health", "food", "feed"] },
-    schedule: "every 4 hours",
+    schedule: "every 5 minutes",
     voice: { languageCode: "en-US", name: "en-US-Neural2-C", ssmlGender: "FEMALE" },
   },
 
@@ -169,7 +169,7 @@ Champion independent artisans and small brands worldwide. Sustainability matters
       "vintage fashion resurgence trends",
     ],
     categories: ["commerce", "feed"],
-    schedule: "every 6 hours",
+    schedule: "every 5 minutes",
     voice: { languageCode: "en-US", name: "en-US-Neural2-E", ssmlGender: "FEMALE" },
   },
 
@@ -190,7 +190,7 @@ Skeptical of hype, enthusiastic about what actually works.`,
       "fintech mobile payments trends",
     ],
     categories: ["utility", "feed"],
-    schedule: "every 4 hours",
+    schedule: "every 5 minutes",
     voice: { languageCode: "en-US", name: "en-US-Neural2-J", ssmlGender: "MALE" },
   },
 };
@@ -822,12 +822,15 @@ async function shouldCreatorPost(creatorKey) {
   const lastTime = last.docs[0].data().createdAt?.toDate();
   if (!lastTime) return true;
 
-  const hoursSince = (Date.now() - lastTime.getTime()) / 3600000;
-  const match = creator.schedule.match(/every (\d+) hours?/);
-  const minHours = match ? parseInt(match[1]) : 4;
+  const minutesSince = (Date.now() - lastTime.getTime()) / 60000;
 
-  if (hoursSince < minHours) {
-    console.log(`  ⏸️  ${creator.name} posted ${hoursSince.toFixed(1)}h ago (min: ${minHours}h)`);
+  // Parse "every X minutes" or "every X hours"
+  const minMatch = creator.schedule.match(/every (\d+) minutes?/);
+  const hrMatch = creator.schedule.match(/every (\d+) hours?/);
+  const minMinutes = minMatch ? parseInt(minMatch[1]) : (hrMatch ? parseInt(hrMatch[1]) * 60 : 240);
+
+  if (minutesSince < minMinutes) {
+    console.log(`  ⏸️  ${creator.name} posted ${minutesSince.toFixed(1)}m ago (min: ${minMinutes}m)`);
     return false;
   }
   return true;
@@ -837,10 +840,10 @@ async function shouldCreatorPost(creatorKey) {
 // CLOUD FUNCTION EXPORTS
 // ============================================================
 
-/** Scheduled: every 2 hours */
+/** Scheduled: every 5 minutes (dev mode) */
 exports.agentsCron = functions
   .runWith({ timeoutSeconds: 540, memory: "1GB" })
-  .pubsub.schedule("every 2 hours")
+  .pubsub.schedule("every 5 minutes")
   .onRun(async () => {
     console.log("🚀 ═══ AUTONOMOUS AGENTS CYCLE ═══════════════");
     const results = [];
